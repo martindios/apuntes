@@ -1,0 +1,173 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 1. Modelo Entidad-Relación (MER)}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+Técnica de diseño de BDs de \textbf{tipo arriba a abajo}, se inicia el proceso identificando los elementos de alto nivel semántico, posteriormente se incorporan los detalles de bajo nivel del modelo. \\
+\begin{itemize}
+    \item \textbf{Elementos de alto nivel semántico}: conjuntos de entidades (representan los objetos del mundo real con existencia física o conceptual) y conjuntos de relaciones (relaciones entre conjuntos de entidades).
+
+    \item \textbf{Elementos de bajo nivel}: atributos descriptivos de los conjuntos identificados en la etapa anterior.
+\end{itemize}
+
+\section{Visión general del proceso de diseño}
+Existen \textbf{4 fases de diseño}: en primer lugar una caracterización de las necesidades de los datos, luego estarían el diseño conceptual, el diseño lógico y finalmente el diseño físico. (Siendo el MER el diseño conceptual). \\
+
+\begin{enumerate}
+    \item \textbf{Caracterización de las necesidades de los datos}.
+
+    \item \textbf{Diseño conceptual}: modelado de alto nivel, independiente de cualquier modelo implementable en un sistema informático. Un esquema conceptual completamente desarrollado indica también los requisitos funcionales de la empresa. En la especificación de requisitos funcionales los usuarios describen los tipos de operaciones (o transacciones) que se llevarán a cabo sobre los datos.
+
+    \item \textbf{Diseño lógico}: transformación de ese modelo de alto nivel a un modelo concreto implementable en un sistema informático.
+
+    \item \textbf{Diseño físico}: manejo de un software de gestión de BD concreto (forma de organización de archivos, estructuras de almacenamiento interno).
+\end{enumerate}
+
+\begin{itemize}
+    \item \textbf{Transacción}: descripción de una operación a realizar sobre los datos de la BD (CRUD por ejemplo)
+
+    \item Entidad: elementos claramente identificables como “cosas”, personas, lugares, productos y similares. Objeto o concepto real o abstracto.
+\end{itemize}
+
+Es importante evitar la \textbf{redundancia} y la \textbf{incompletitud} del diseño.
+
+\newpage
+
+\section{MER}
+\subsection{Diferencia entre entidad y conjunto de entidades}
+\begin{itemize}
+    \item \textbf{Entidad}: objeto o concepto individual que tiene existencia propia en el modelo de datos. “Cliente” es una entidad que representa a una persona que compra productos.
+
+    \item \textbf{Conjunto de entidades}: grupo o conjunto de entidades del mismo tipo que comparten los mismos atributos. El conjunto de entidades incluye todas las instancias de una entidad. Una tabla “Clientes” es el conjunto de todas las entidades “Cliente”.
+\end{itemize}
+
+\subsection{Pilares básicos}
+\begin{enumerate}
+    \item \textbf{Conjunto de entidades}: grupo de objetos similares con existencia física o conceptual, suelen corresponder a sustantivos (Profesor, Alumno, ...). El término \textbf{extensión de un conjunto de entidades} se refiere a la colección real de entidades que pertenece al conjunto de entidades en cuestión. Cada entidad tiene un valor par cada uno de sus atributos.
+
+    \item \textbf{Conjunto de relaciones}: modelan dependencias entre los elementos de los conjuntos de entidades, suelen corresponder a verbos (Tener, Vender). La función que desempeña una entidad en una relación se denomina \textbf{rol de esa entidad}, los roles siempre existen, pero muchas veces son implícitos.
+
+    \item \textbf{Atributos descriptivos}: propiedades elementales de las entidades que forman los conjuntos de entidades y de las relaciones que forman los conjuntos de relaciones de interés para la misión de la BD (atributos necesarios solo), suelen ser adjetivos o adverbios. \\
+    Existen atributos simples y compuestos, los compuestos se pueden dividir en subpartes. Hay atributos monovalorados y multivalorados (pueden tener varios valores). También hay atributos derivados, que se pueden obtener a partir del valor de otros atributos o entidades relacionados.
+\end{enumerate}
+
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Entidad}: objeto, de un determinado tipo, identificable de forma unívoca.
+
+    \item \textbf{Conjunto de entidades}: Grupo de objetos de un tipo, con las mismas propiedades, que se identifican en la BD como poseedores de una existencia independiente.
+
+    \item \textbf{Relación}: asociación identificable de forma unívoca que incluye una entidad de cada uno de los conjuntos de entidades participantes. 
+
+    \item \textbf{Conjunto de relaciones}: grupo de relaciones entre entidades de conjuntos de entidades.
+
+    \item \textbf{Grado de un conjunto de relaciones}: número de conjuntos de entidades que participan en las relaciones individuales del conjunto de relaciones.
+
+    \item \textbf{Atributo}: propiedad de un conjunto de entidades o de un conjunto de relaciones.
+
+    \item \textbf{Dominio del atributo}: conjunto de valores permitidos para el atributo.
+    
+\end{itemize}
+
+\newpage
+
+\section{Restricciones}
+Las restricciones determinan la realidad que la BD presenta.
+
+\subsection{Correspondencia de cardinalidades}
+Expresa el número de entidades a las que otra entidad se puede asociar mediante un conjunto de relaciones.
+\begin{itemize}
+    \item \textbf{Uno a uno}: cada entidad de A se asocia, como máximo, con una entidad de B, y cada entidad de B se asocia, como máximo, a una entidad de A.
+
+    \item \textbf{Uno a varios}: cada entidad de A se asocia con cualquier número (0 o más) de entidades de B. Cada entidad de B, sin embargo, se puede asociar, como máximo con una entidad de A.
+
+    \item \textbf{Varios a uno}: inverso al anterior.
+
+    \item \textbf{Varios a varios}: cada entidad de A se asocia con cualquier número de entidades de B y al revés.
+\end{itemize}
+
+\subsection{Restricciones de participación}
+\begin{itemize}
+    \item \textbf{Participación total}: se dice que la participación de un conjunto de entidades E en un conjunto de relaciones R es total si solo algunas entidades de E participan en relaciones de R.
+
+    \item \textbf{Participación parcial}: si solo algunas entidades de E participan en relaciones de R.
+\end{itemize}
+
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Clave primaria}: conjunto mínimo de atributos que tienen valores diferentes para cada entidad en cada conjunto de entidades.
+
+    \item \textbf{Multiplicidad}: rango (número mínimo y máximo) de entidades de un conjunto de entidades que pueden relacionarse, mediante un conjunto de relaciones, con una entidad de otro(s) conjunto(s) de entidades.
+
+    \item \textbf{Participación}: determina si todas, o sólo parte de, las entidades de un conjunto de entidades participan en un conjunto de relaciones. Es el mínimo del rango de la multiplicidad.
+
+    \item \textbf{Cardinalidad}: describe el número máximo de entidades de un conjunto de entidades que puede(n) relacionarse con otro(s) conjunto(s) de entidades a través de un conjunto de relaciones. Es el número máximo del rango de la multiplicidad.
+
+    \item \textbf{Correspondencia de cardinalidades}: cardinalidades correspondientes a los conjuntos de entidades participantes en un conjunto de relaciones.
+
+    \item \textbf{Clave candidata}: conjunto mínimo de atributos que identifican de forma unívoca cada entidad dentro de un conjunto de entidades.
+
+    \item \textbf{Clave principal o primaria}: clave candidata elegida por el diseñador.
+\end{itemize}
+
+\section{Atributos redundantes}
+Cada atributo describe una propiedad de un conjunto de elementos (entidades o relaciones), está solo una vez en el modelo y, además, está en el conjunto de entidades o en el conjunto de relaciones al cuál pertenece por significado. \textbf{Si se necesita el atributo en otro lugar del modelo se obtiene a través de una relación}.
+
+\newpage
+
+\section{Diagramas Entidad-Relación}
+\begin{itemize}
+    \item \textbf{Conjunto de entidades débil}: conjunto de entidades que no tienen suficientes atributos para formar una clave primaria.
+
+    \item \textbf{Conjunto de entidades identificadoras o propietarias}: un conjunto de entidades débil se asocia a este tipo de conjunto de entidades para poder existir. Cada entidad débil debe asociarse con una entidad identificadora.
+\end{itemize}
+
+El conjunto de entidades débiles depende existencialmente del conjunto de entidades identificadoras. El conjunto de entidades identificadoras es propietario del conjunto de entidades débiles al que identifica. \\
+La relación que asocia el conjunto de entidades débiles con el conjunto de entidades identificadoras se denomina \textbf{relación identificadora}.
+
+\section{MER extendido}
+\begin{itemize}
+    \item \textbf{Especialización}: proceso de establecimiento de subgrupos dentro del conjunto de entidades.
+    \item \textbf{Generalización}: relación de contención que existe entre el conjunto de entidades de nivel superior y uno o varios conjuntos de entidades de nivel inferior.
+\end{itemize}
+
+Las \textbf{jerarquías} son clasificaciones de las entidades presentes en un conjunto de entidades (no aportan nada nuevo, no se añaden atributos extra ni nada). \\
+Las subclases contienen las mismas entidades que la superclase, pero agrupadas en base al cumplimiento de alguna característica. \\
+Las \textbf{agregaciones} generan conjuntos de entidades de nivel conceptual superior agrupando conjuntos de entidades relacionados mediante conjunto de relaciones. Su objetivo es poder \textbf{establecer conjuntos de relaciones entre conjuntos de relaciones}.
+
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Superclase}: conjunto de entidades que incluye uno o más subgrupos diferentes en sus entidades, los cuáles es preciso representar en el modelo de datos.
+
+    \item \textbf{Subclase}: subgrupo diferenciado de entidades de un conjunto de entidades, que necesita ser representado en el modelo de datos.
+
+    \item \textbf{Herencia de atributos en jerarquías}: las subclases de una jerarquía poseen los atributos de su superclase (sin necesidad de indicarlo explícitamente).
+
+    \item \textbf{Restricción de participación}: determina si todo miembro de la superclase debe participar, o no, como miembro de una subclase. 
+
+    \item \textbf{Restricción de disyunción}: indica si es posible que un miembro de una superclase pueda ser miembro de varias subclases o sólo pueda ser miembro de una subclase.
+
+    \item \textbf{Agregación}: conjunto de entidades de nivel conceptual superior compuesto por un conjunto de relaciones entre un conjunto de entidades. 
+\end{itemize}
+
+\end{document}
