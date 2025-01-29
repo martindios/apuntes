@@ -1,0 +1,103 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 2. Modelo Relacional (MR)}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Introducción}
+Todos los datos que maneja una BD se almacenan en \textbf{tablas}. Cada \textbf{columna} de la tabla será un \textbf{atributo} y cada \textbf{fila} de la tabla será una relación resultante del \textbf{producto cartesiano de atributos}. \\
+
+Es una \textbf{técnica de diseño de abajo a arriba}. Se comienza identificando todos los atributos o características interesantes para la resolución del problema, luego se agrupan estos atributos en elementos de mayor nivel semántico.
+
+\section{Estructura de las BDs Relacionales}
+Consiste en un conjunto de tablas, con nombre único. \\
+En general, \textbf{una fila de una tabla representa una relación entre un conjunto de valores}. Como una tabla es una colección de estas relaciones, existe una \textbf{fuerte correspondencia} entre el concepto de \textbf{tabla} y el \textbf{concepto matemático de relación}. \\
+
+El término \textbf{relación} se usa para referirse a una \textbf{tabla}, \textbf{tupla} para referirse a una \textbf{fila}, y \textbf{atributo} a una \textbf{columna} de una tabla. \textbf{Ejemplar de relación} se usa para referirse a una \textbf{instancia específica de una relación}. \\
+
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Relación}: tabla con filas y columnas resultado del producto cartesiano de elementos de interés.
+
+    \item \textbf{Atributo}: cada columna, con nombre diferente, de una relación.
+
+    \item \textbf{Dominio}: conjunto de valores permitidos para un atributo.
+
+    \item \textbf{Tupla}: cada fila de una relación.
+
+    \item \textbf{Grado de una relación}: número de atributos que forman la relación (tabla).
+
+    \item \textbf{Cardinalidad}: número de tuplas que contiene la relación.
+\end{itemize}
+
+\newpage
+
+\section{Esquema de la BD}
+La definición de todas las tablas que forman una BD recibe el nombre de \textbf{Esquema de la BD}. \\
+Los datos particulares almacenados en un momento dado se denomina \textbf{Ejemplar de la BD}. 
+
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Base de Datos Relacional}: colección de relaciones, cada una con un nombre distinto.
+
+    \item \textbf{Esquema de relación}: estructura de una relación definida por un conjunto de parejas de atributos y sus correspondientes dominios.
+
+    \item \textbf{Esquema de la Base de Datos Relacional}: conjunto de esquemas de relaciones, cada uno con un nombre distinto.
+\end{itemize}
+
+\section{Superclaves, claves candidatas, clave primaria y claves externas}
+\textbf{La principal diferencia entre MER y MR es la redundancia de datos}.
+\subsection{Definiciones}
+\begin{itemize}
+    \item \textbf{Superclave}: atributo o conjunto de atributos que identifica(n) de forma unívoca cada tupla dentro de una relación.
+
+    \item \textbf{Clave candidata}: superclave tal que ningún subconjunto propio de la misma es superclave de la relación (superclave mínima).
+
+    \item \textbf{Clave principal}: clave candidata seleccionada por el diseñador de la BD.
+
+    \item \textbf{Clave externa}: atributo o conjunto de atributos dentro de una relación que se corresponde(n) con una clave candidata de algúna relación (incluso la misma) de la BD.
+
+    \item \textbf{Valor null}: valor desconocido de un atributo en una tupla de una relación.
+
+    \item \textbf{Integridad de entidad}: en una relación, ningún atributo de una clave candidata puede tomar valor null.
+
+    \item \textbf{Integridad referencial}: si hay una clave externa en una relación, el valor de dicha clave externa debe corresponder al valor de la clave candidata relacionada en la relación de origen o tomar valor null.
+\end{itemize}
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
