@@ -1,0 +1,185 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 5. SQL: tablas y vistas}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+\textbf{SQL (Structured Query Language)}.
+\begin{itemize}
+    \item \textbf{LDD}: \textbf{Lenguaje de Definición de Datos}; definición, modificación y borrado de tablas y vistas.
+
+    \item \textbf{LMD}: \textbf{Lenguaje de Manipulado de Datos}; inserción, modificación y borrado de tuplas en las tablas.
+\end{itemize}
+
+\section{Definición de datos en SQL}
+Tipos de datos:
+\begin{itemize}
+    \item \textbf{char(n)}: cadena de caracteres de longitud fija.
+    
+    \item \textbf{varchar(n)}: cadena de caracteres de longitud variable, con una longitud máxima $n$ especificada por el usuario.
+
+    \item \textbf{int} y \textbf{smallint}.
+
+    \item \textbf{numeric(p, d)}: p dígitos (más el signo), y d de esos dígitos pertenecen a la parte decimal.
+
+    \item \textbf{real}, \textbf{double precision}.
+
+    \item \textbf{float(n)}: número de coma flotante cuya precisión es, por lo menos, de n dígitos. 
+\end{itemize}
+
+Bases de datos:
+\begin{itemize}
+    \item CREATE DATABASE name [opciones extra]
+    
+    \item ALTER DATABASE name RENAME TO new\_name
+    
+    \item DROP DATABASE name
+\end{itemize}
+
+Tablas:
+\begin{itemize}
+    \item CREATE [opciones] TABLE table\_name [opciones, column\_name, data\_type]. (CREATE TABLE Personas(dni INT, nombre VARCHAR(25)))
+    
+    \item ALTER TABLE name [*] action [...] 
+
+    \item DROP TABLE name [...]
+\end{itemize}
+
+\section{Gestión de la información contenida en la BD}
+\begin{itemize}
+    \item INSERT INTO table\_name [column\_name]. (si el column\_name no se indica va a toda la tabla)
+
+    \item UPDATE table\_name SET [column\_name]
+
+    \item DELETE FROM table\_name [WHERE condition]
+\end{itemize}
+
+\newpage
+
+\section{Vistas}
+\begin{itemize}
+    \item \textbf{Relación base}: una tabla con un nombre correspondiente a una relación del esquema de la BD dónde las tuplas están almacenadas físicamente en el Gestor de BDs.
+
+    \item \textbf{Vista}: el resultado dinámico de una o más operaciones relacionadas sobre las relaciones base (y, opcionalmente, vistas previas) para producir otra relación.
+\end{itemize}
+
+\begin{itemize}
+    \item CREATE VIEW name [opciones] AS query
+
+    \item ALTER VIEW name col\_name SET DEFAULT expresión
+
+    \item DROP VIEW name
+
+    \item CREATE MATERIALIZED VIEW table\_name AS query: los datos de la vista están almacenados.
+
+    \item REFRESH MATERIALIZED VIEW name: se utiliza para refrescar los datos de la vista.
+
+    \item DROP MATERIALIZED VIEW name
+\end{itemize}
+
+\section{Restricciones de Integridad}
+
+Las restricciones de integridad son reglas que aseguran la validez y consistencia de los datos en una base de datos. Se pueden clasificar en dos tipos principales:
+
+\subsection{Tipos de Restricciones}
+
+\begin{itemize}
+    \item \textbf{Restricción de un solo atributo:} \texttt{column\_constraint}
+    \item \textbf{Restricción de la tabla entera:} \texttt{table\_constraint}
+\end{itemize}
+
+\subsection{Tipos de Restricciones Específicas}
+
+Las restricciones que se pueden aplicar incluyen:
+
+\begin{itemize}
+    \item \texttt{NOT NULL}: asegura que el atributo no puede tener un valor nulo.
+    \item \texttt{CHECK (expresión)}: permite definir una condición que debe cumplirse.
+    \item \texttt{DEFAULT default\_expression}: establece un valor por defecto para el atributo.
+    \item \texttt{PRIMARY KEY index\_parameters}: define la clave primaria de la tabla.
+    \item \texttt{REFERENCES reftable [(refcolumn)]}: establece una relación de referencia con otra tabla.
+\end{itemize}
+
+\subsection{Claves Candidatas}
+
+\textbf{Unique} ($A_1, A_2, ...$): Los atributos $A_1, A_2, ...$ forman una clave candidata, lo que significa que ningún par de tuplas en la relación puede ser igual en todos los atributos indicados.
+
+\subsection{Ejemplo de Restricción CHECK}
+
+\begin{itemize}
+    \item \texttt{CHECK (sueldo > \space 40000)}: Esta restricción asegura que el sueldo sea mayor a 40,000.
+\end{itemize}
+
+\newpage
+
+\subsection{Integridad Referencial}
+
+La integridad referencial asegura que el valor que aparece en una relación para un conjunto dado de atributos también aparezca en otra relación para un conjunto determinado de atributos.
+
+\subsubsection{Ejemplo de Clave Externa}
+
+\begin{itemize}
+    \item \texttt{foreign key (nombre\_dept) references departamento}: Esta declaración de clave externa especifica que para cada tupla de la tabla \texttt{asignatura}, el nombre del departamento debe existir en la relación \texttt{departamento}.
+\end{itemize}
+
+\subsection{Políticas de Integridad Referencial}
+
+Las políticas de integridad referencial determinan cómo se comporta la base de datos cuando se borran o actualizan datos en la clave candidata referenciada. Las opciones son:
+
+\begin{itemize}
+    \item \textbf{NO ACTION}: No se permite la acción (equivalente a RESTRICT).
+    \item \textbf{CASCADE}: Al borrar una tupla referenciada, se borran también las tuplas que la referencian.
+    \item \textbf{SET NULL}: Permite el borrado de la tupla referenciada y establece a \texttt{NULL} las tuplas que la referencian.
+    \item \textbf{SET DEFAULT}: Permite el borrado de la tupla referenciada y establece un valor por defecto en las tuplas que la referencian.
+\end{itemize}
+
+\subsection{Orden de Operaciones}
+
+Para las actualizaciones, generalmente se utiliza \texttt{CASCADE}. Para los borrados, el orden correcto es:
+
+\begin{enumerate}
+    \item NO ACTION
+    \item SET...
+    \item CASCADE
+\end{enumerate}
+
+
+
+
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
