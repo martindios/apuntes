@@ -1,0 +1,370 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 6. SQL: consultas}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Estructura básica de una consulta en SQL}
+
+Una consulta en SQL se compone de tres cláusulas principales: \textbf{SELECT}, \textbf{FROM} y \textbf{WHERE}. A continuación, se describen los pasos básicos para construir una consulta:
+
+\begin{enumerate}
+    \item Generar un producto cartesiano de las relaciones especificadas en la \textbf{cláusula FROM}.
+    \item Aplicar los predicados indicados en la \textbf{cláusula WHERE} al resultado del paso 1.
+    \item Para cada tupla del paso 2, extraer los atributos (o resultados de las expresiones) indicados en la \textbf{cláusula SELECT}.
+\end{enumerate}
+
+\begin{itemize}
+    \item La \textbf{cláusula WHERE} de SQL corresponde a la operación \textbf{Selección} del álgebra relacional.
+    \item La \textbf{cláusula SELECT} de SQL corresponde a la operación \textbf{Proyección} del álgebra relacional.
+\end{itemize}
+
+\subsection{Ejemplo de consulta}
+Consideremos la siguiente consulta SQL:
+
+\begin{verbatim}
+SELECT nombre 
+FROM profesor 
+WHERE sueldo > 70000 AND nombre_dept = 'Informática';
+\end{verbatim}
+
+\subsection{Unión natural}
+La unión natural considera únicamente aquellos pares de tuplas que tienen los mismos valores en los atributos que aparecen en los esquemas de ambas relaciones. Por lo tanto, las siguientes consultas son equivalentes:
+
+\begin{verbatim}
+SELECT nombre, asignatura_ID 
+FROM profesor, enseña 
+WHERE profesor.ID = enseña.ID;
+\end{verbatim}
+
+\begin{verbatim}
+SELECT nombre, asignatura_ID 
+FROM profesor NATURAL JOIN enseña;
+\end{verbatim}
+
+\subsection{Uso de JOIN...USING}
+El constructor de unión natural permite especificar exactamente qué columnas se deben igualar. Por ejemplo:
+
+\begin{verbatim}
+SELECT nombre, nombre_asig 
+FROM (profesor NATURAL JOIN enseña) 
+JOIN asignatura USING (asignatura_id);
+\end{verbatim}
+
+\subsection{Eliminación de duplicados}
+Para controlar la aparición de duplicados en los resultados, se pueden utilizar las siguientes cláusulas:
+
+\begin{verbatim}
+SELECT DISTINCT nombre_dept 
+FROM profesor;
+\end{verbatim}
+Esta consulta fuerza a que no existan duplicados.
+
+\begin{verbatim}
+SELECT ALL nombre_dept 
+FROM profesor;
+\end{verbatim}
+Esta consulta muestra duplicados (comportamiento por defecto).
+
+\section{Operaciones básicas adicionales en SQL}
+\begin{itemize}
+    \item \textbf{as}: puede aparecer en SELECT y/o en FROM. Se usa si se desea cambiar el nombre de un atributo. \\
+    SELECT nombre as nombre\_profesor...
+
+    \item \textbf{like}: comparación de patrones (en texto). \\
+    WHERE edificio like '\%Watson\%'; \\
+    \begin{itemize}
+        \item 'Intro\%': coincide con cualquier cadena de caracteres que empiece con Intro. 
+
+        \item '\%Infor\%': coincide con cualquier cadena de caracteres que contenga Infor.
+
+        \item '\_\_\_': coincide con cualquier cadena de caracteres que tenga exactamente 3 caracteres.
+
+        \item '\_\_\_\%': coincide con cualquier cadena de caracteres que tenga, al menos, 3 caracteres.
+    \end{itemize}
+
+    \item \textbf{*}: se puede usar en SELECT para indicar 'todos los atributos'.
+
+    \item \textbf{order by}: de manera predeterminada coloca los elementos de forma ascendente. \\
+    SELECT * from profesor order by sueldo desc, nombre asc; (sueldo en forma descendente, si dos profesores tienen el mismo sueldo, se ordenan en orden ascendente de nombre).
+
+    \item \textbf{between}: WHERE sueldo between 90000 and 120000;
+    
+\end{itemize}
+
+\section{Operaciones sobre conjuntos en SQL}
+\begin{itemize}
+    \item \textbf{union}: (consulta1) union (consulta2); que estén en la consulta1 o en la consulta2, o en ambas (union all para mantener duplicados).
+
+    \item \textbf{intersect}: (consulta1) intersect (consulta2); que estén en la consulta1 y en la consulta2 (intersect all para mantener duplicados).
+
+    \item \textbf{except}: todas las tuplas de la primera entrada que no están en la segunda (except all para mantener duplicados). 
+\end{itemize}
+
+Las \textbf{tablas} deben ser \textbf{compatibles} (sintácticamente): mismo número de atributos y mismos tipos de dato de cada atributo. 
+
+\section{Valores nulos}
+Se trata con \textbf{unknown} el resultado de cualquier comparación en la que intervenga el valor null, tratándose como un tercer valor lógico (true, false, unknown).
+
+\begin{itemize}
+    \item \textbf{and}:
+    \begin{itemize}
+        \item true and unknown: unknown
+        \item false and unknown: false
+        \item unknown and unknown: unknown
+    \end{itemize}
+
+    \item \textbf{or}:
+    \begin{itemize}
+        \item true or unknown: true
+        \item false or unknown: unknown
+        \item unknown or unknown: unknown
+    \end{itemize}
+
+    \item \textbf{not}: not unknown: unknown
+\end{itemize}
+
+\subsection{Ejemplo de uso de null}
+\begin{verbatim}
+SELECT nombre 
+FROM profesor
+WHERE sueldo is (not) null;
+\end{verbatim}
+Que el sueldo sea (o no) nulo. También existe is unknown e is not unknown.
+
+\section{Funciones de agregación en SQL}
+\begin{itemize}
+    \item Media(\textbf{avg})
+    \item Mínimo (\textbf{min})
+    \item Máximo (\textbf{max})
+    \item Total (\textbf{sum})
+    \item Recuento (\textbf{count})
+\end{itemize}
+Para elminiar duplicados antes de usar una función de agregación se usa \textbf{distinct}: select count distinct ID from... \\
+
+Para contar el número de tuplas de una relación: select count * from asignatura; \\
+
+\subsection{Group by}
+Se usa para formar grupos. Las tuplas con el mismo valor en todos los atributos en la cláusula group by se sitúan en un grupo. 
+\begin{verbatim}
+SELECT nombre_dept, avg(sueldo) as med_sueldo
+FROM profesor group by nombre_dept;
+\end{verbatim}
+En este caso el group by agrupa los resultados por el nombre del departamento (nombre\_dept). Esto significa que el promedio de sueldo se calculará para cada departamento por separado. \\
+
+Cualquier atributo que no esté en la cláusula group by \textbf{solo debe aparecer} dentro de una función de agregación si aparece también en la cláusula SELECT. Es decir, \textbf{solo los atributos que aparecen en la sentencia SELECT sin agregarse se encuentran en la cláusula group by}.
+
+\subsection{Having}
+Indicar una condición que se aplica a grupos y no a tuplas.
+\begin{verbatim}
+SELECT nombre_dept, avg(sueldo) as med_sueldo
+FROM profesor group by nombre_dept having avg(sueldo) > 50000;
+\end{verbatim}
+
+\subsection{Secuencia de operaciones para crear consultas con cláusulas de agregación}
+\begin{enumerate}
+    \item La \textbf{cláusula FROM} se evalúa en primer lugar.
+
+    \item Si existe una \textbf{cláusula WHERE}, el predicado de esta cláusula se aplica al resultado de la relación de la cláusula FROM.
+
+    \item Las tuplas que satisfagan el predicado WHERE se sitúan en grupos de acuerdo a la \textbf{cláusula group by}, si existe. Si no existe todo \textbf{el conjunto de tuplas se trata como si fuese un único grupo}.
+
+    \item Se aplica la \textbf{cláusula having}, si existe, a cada uno de los grupos; los grupos que no satisfagan el resultado de la cláusula having se eliminan.
+
+    \item La \textbf{cláusula SELECT} utiliza los grupos que quedan para generar tuplas con el resultado de la consulta aplicando las funciones de agregación \textbf{para obtener una única tupla resultado para cada grupo}.
+\end{enumerate}
+
+\subsection{Agregación con valores nulos y booleanos}
+Todas las funciones de agregación excepto count(*) deben \textbf{ignorar los valores nulos} que aparezcan como entrada. \\
+Count de una \textbf{colección vacía} debe valer 0, el resto de operaciones de agregación devuelven null cuando se aplican a una colección vacía.
+
+\section{Subconsultas anidadas}
+
+\subsection{in}
+Comprueba la \textbf{pertenencia a un conjunto}, donde el conjunto es la colección de valores resultados de una cláusula SELECT.
+\begin{verbatim}
+SELECT distinct asignatura_id
+FROM seccion
+WHERE semestre = 'Otoño' and
+año = 2009 and
+    asignatura_id in (SELECT distinct asignatura_id
+    WHERE semestre = 'Primavera' and año = 2010);
+\end{verbatim}
+
+\begin{verbatim}
+...WHERE nombre not in ('Juanlu', 'Mozart');
+\end{verbatim}
+
+\newpage
+
+\subsection{$>$ some}
+\textbf{Mayor que al menos una}. \\
+Ejemplo: Encontar los nombres de todos los profesores cuyo sueldo es mayor que al menos uno de los profesores del departamento de Biología.
+
+\begin{verbatim}
+SELECT nombre
+FROM profesor
+WHERE sueldo >some (SELECT sueldo
+                    FROM profesor
+                    WHERE nombre_dept = 'Biología');
+\end{verbatim}     
+
+También existen <some, $<$=some, $<>$some, ... \\
+\textbf{=some es igual que in, pero $<>$some NO es igual que not in}.
+
+\subsection{$>$all}
+\textbf{Superior al de todos}. \\
+Ejemplo: todos los profesores que tienen un sueldo mayor al de cualquier profesor del departamento de Biología.
+
+\begin{verbatim}
+SELECT nombre
+FROM profesor
+WHERE sueldo >all (SELECT sueldo
+                    FROM profesor
+                    WHERE nombre_dept = 'Biología');
+\end{verbatim}   
+
+También existen $<$all, $<$=all, $<>$all, ... \\
+\textbf{$<>$all es igual que not in, pero =all NO es igual que in}.
+
+\subsection{exists}
+Devuelve el valor \textbf{true si su argumento de subconsulta no resulta vacía}. \\
+Ejemplo: encontrar todas las asignaturas que se enseñaron tanto en el semestre de de otoño de 2009 como en el semestre de primavera de 2010.
+
+\begin{verbatim}
+SELECT asignatura_id
+FROM sección as S
+WHERE semestre = 'Otoño' and año = 2009 and
+    exists (SELECT *
+            FROM sección as T
+            WHERE semestre = 'Primavera' and año = 2010
+            and S.asignatura_id = T.asignatura_id);
+\end{verbatim}
+
+Para escribir que la relación A contiene a la relación B se ecribe de la siguiente forma:
+
+\begin{verbatim}
+not exists(B except A)
+\end{verbatim}
+
+\subsection{unique}
+Devuelve un valor true si la subconsulta que se le pasa como argumento \textbf{no contiene tuplas duplicadas}. \\
+Ejemplo: encontrar todas las asignatura que se ofertaron al menos una vez en 2009.
+
+\begin{verbatim}
+SELECT T.asignatura_id
+FROM asignatura as T
+WHERE unique (SELECT R.asigntura_id
+              FROM sección as R
+              WHERE T.asignatura_id = R.asignatura_id and
+              R.año = 2009);
+\end{verbatim}      
+
+\newpage
+
+\subsection{with}
+Definir \textbf{vistas temporales} cuya definición solo está disponible para la consulta en la que aparece la cláusula. \\
+Ejemplo: seleccionar los departamentos con el máximo presupuesto.
+
+\begin{verbatim}
+with max_presupuesto(valor) as
+    (SELECT max(presupuesto)
+    FROM departamento)
+    
+SELECT presupuesto
+FROM departamento, max_presupuesto
+WHERE departamento.presupuesto = max_presupuesto.valor;
+\end{verbatim}
+
+\subsection{Subconsultas escalares}
+Se permiten escribir en cualquier punto en el que \textbf{una expresión devuelve un valor}. \\
+Ejemplo: listar todos los departamentos junto con el número de profesores de cada departamento.
+
+\begin{verbatim}
+SELECT nombre_dept
+    (SELECT count(*)
+    FROM profesor
+    WHERE departamento.nombre_dept =
+        profesor.nombre_dept)
+    as num_profesores
+FROM departamento;
+\end{verbatim}
+
+\section{Expresiones de reunión en SQL}
+\subsection{on}
+Permite la reunión de un predicado general sobre relaciones.
+Ejemplo:
+\begin{verbatim}
+SELECT *
+FROM estudiante join matricula on 
+    estudiante.ID = matricula.ID;
+\end{verbatim}
+Esta consulta sería igual que un natural join, excepto que \textbf{contiene los atributos de ID 2 veces en la reunión}. \\
+Para que solo se mostrara una vez se podría filtrar con el SELECT. \\
+\textbf{on se puede utilizar por 2 motivos}: para hacer reuniones externas y por legibilidad. 
+
+\newpage
+
+\subsection{Reunión externa}
+Funciona de forma similar a la operación de reunión, \textbf{creando tuplas en el resultado que contienen valores nulos}. \\
+Existen 3 formas:
+\begin{itemize}
+    \item \textbf{Reunión externa izquierda} (left outer join): conserva las tuplas solo en la relación de antes (a la izquierda) de esta operación.
+
+    \item \textbf{Reunión externa derecha} (right outer join): conserva las tuplas solo en la relación de después (a la derecha) de esta operación.
+
+    \item \textbf{Reunión externa completa} (full outer join): conserva las tuplas de ambas relaciones. 
+\end{itemize}
+
+Ejemplo:
+\begin{verbatim}
+SELECT *
+FROM estudiante natural left outer join matrícula;
+\end{verbatim}
+
+\begin{verbatim}
+SELECT *
+FROM estudiante left outer join matrícula
+    on estudiante.ID = matrícula.ID;
+\end{verbatim}
+
+Estas 2 consultas son iguales, excepto que la segunda el atributo ID estaría duplicado. \\
+
+\textbf{On y where} se comportan de manera \textbf{diferente} en la \textbf{reunión externa}. La condición on forma parte de la especificación de los \textbf{join (reuniones), que por defecto son inner, internas}.
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
