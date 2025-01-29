@@ -1,0 +1,222 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{BDI Tema 8. Normalización del Modelo Relacional}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Introducción}
+\begin{itemize}
+    \item \textbf{Normalización}: técnica para producir un conjunto de relaciones con una serie de propiedades a partir de unos requisitos de datos. Esta técnica es de abajo a arriba. Se basa en aplicar al conjunto de relaciones una serie de pruebas ordenadas.
+    \item \textbf{Dependencia funcional}: son relaciones entre valores de conjuntos de atributos. Las dependencias funcionales entre atributos sirven como una forma de representar la semántica que se incorpora a la base de datos.
+    \item \textbf{Formas Normales}: una serie de condiciones o pruebas formales que deben cumplirse sucesivamente en el proceso de normalización de una base de datos. Alcanzar niveles más altos de Formas Normales asegura una mejor organización y eficiencia de la base de datos. Una base de datos en Tercera Forma Normal o en Forma Normal de Boyce-Codd es considerada razonablemente correcta.
+\end{itemize}
+
+\section{Buenos Diseños Relacionales}
+Los buenos diseños relaciones tienen que tener las siguientes características:
+\begin{itemize}
+    \item Atributos mínimos
+    \item Mínima redundancia
+    \item Agrupación temática máxima en las tablas
+\end{itemize}
+
+Las dependencias funcionales ayudan a definir relaciones clave entre atributos. Por ejemplo, la dependencia nombre$\_$dept $\xrightarrow{}$ presupuesto indica que cada departamento tiene un único presupuesto. \\
+Usar \textbf{dependencias funcionales} permite reconocer cuando un esquema contiene datos redundantes y cuándo es necesario dividirlo para mejorar la organización de la base de datos.
+
+La \textbf{descomposición} consiste en dividir un esquema grande en varios esquemas más pequeños para reducir redundancias. \\
+Descomposición sin pérdidas: es ideal porque permite recuperar toda la información original sin perder integridad ni crear datos incorrectos. \\
+Descomposición con pérdidas: es problemática, ya que puede dar lugar a resultados incorrectos o pérdida de información, como ocurre en el caso de empleados con nombres iguales. \\
+
+\textbf{Para que la descomposición sea válida es necesaria una combinación sin pérdidas y una conservación de las dependencias.} \\
+
+\section{Primera Forma Normal}
+\textbf{Primera Forma Normal (1FN)}: relación en la que la intersección de toda fila y columna contiene un valor atómico. (todos los atributos son atómicos). Esta primera forma normal es obligatoria en el MR.\\
+\textbf{Relación universal}: una única tabla con todos los atributos de interés de la BD de un MR.
+
+\section{Descomposición mediante Dependencias Funcionales}
+Definiciones importantes:
+\begin{itemize}
+    \item \textbf{Dependencia funcional}: describe la relación existente entre atributos de una relación. Si A y B son conjuntos de atributos de la relación R, B será funcionalmente dependiente de A (A$\xrightarrow{}$B) si cada valor de A está asociado con exactamente un valor de B. La parte izquierda de una dependcia funcional se denomina \textbf{determinante}.
+    \item \textbf{Determinante}: grupo de atributos del lado izquierdo de una Dependencia Funcional.
+    \item \textbf{Dependencia Funcional Completa}: si A y B son conjuntos de atributos de la relación R, B depende funcionalmente de manera completa de A si B depende funcionalmente de A pero no de ningún subconjunto de A.
+    \item \textbf{Dependencia parcial}: dependencia funcional en la cual existe algún atributo que puede eliminarse del determinante y la dependencia continua verificándose.
+    \item \textbf{Dependencia transitiva}: si A, B y C son conjuntos de atributos de la relación R, C depende transitivamente de A a través de B si C depende funcionalmente de B y B depende funcionalmente de A.
+    
+\end{itemize}
+
+\textbf{Ejemplos de dependencias funcionales} serían el dni de una persona y su nombre (si en dos tuplas de una tabla apareciera el mismo dni, debería aparecer el mismo nombre), la matrícula de un coche y su modelo (si en dos tuplas de una tabla se repitiera el valor de la matrícula, debería repetirse el modelo del coche). \\
+
+\\
+
+\begin{itemize}
+    \item La \textbf{Primera Forma Normal} prohíbe los atributos compuestos y/o multivalorados. 
+    
+    \item La \textbf{Segunda Forma Normal} impide la existencia de dependencias funcionales parciales (dependencias en las cuales el lado izquierdo, $\alpha$, sea una parte de una clave candidata pero no la clave candidata completa). Es decir, todo atributo que no sea de una clave candidata depende funcionalmente de forma completa de cualquier clave candidata.
+    
+    \item La \textbf{Tercera Forma Normal} impide la existencia de dependencias funcionales transitivas (dependencias en las cuales el lado izquierdo, $\alpha$, no forme parte de una clave candidata).
+
+    \item La \textbf{Forma Normal de Boyce-Codd} obliga a que en todas las dependencias funcionales no triviales, el lado izquierdo, $\alpha$, sea una clave candidata de la relación.
+\end{itemize}
+
+Un ejemplar de relación que satisfaga todas las relaciones del mundo real de este tipo se llama ejemplar legal de relación; un \textbf{ejemplar legal} de una base de datos es aquel en el que todos los
+ejemplares de relación son ejemplares legales. \\
+
+\\
+
+Cuando un ejemplar \textbf{satisface} una dependencia funcional $\alpha \xrightarrow{} \beta$, significa que, en ese ejemplar, si dos tuplas tienen los mismos valores en los atributos de $\alpha$, también deben tener los mismos valores en los atributos de $\beta$. \\
+
+\\
+
+Decimos que una dependencia funcional se \textbf{cumple} en un esquema de relación si todos los ejemplares legales de esa relación satisfacen dicha dependencia. Esto implica que la dependencia no solo es cierta para un conjunto específico de datos, sino que es una restricción intrínseca del esquema, por lo que todos los datos futuros también deberían cumplirla. \\
+
+\\
+
+Las \textbf{dependencias funcionales triviales} son aquellas que son automáticamente ciertas para todos los posibles ejemplares de una relación, sin importar los datos específicos. Estas dependencias cumplen la condición $\beta \subseteq \alpha$. Un ejemplo de dependencia funcional trivial es $A \xrightarrow{} A$: siempre se cumple que si dos tuplas tienen el mismo valor para AA, entonces tendrán el mismo valor en A. Otra forma trivial es $AB \xrightarrow{} A$, ya que cualquier conjunto que contenga A en su parte izquierda siempre garantiza que el valor de A será el mismo en ambas tuplas si coinciden en todos los atributos de la izquierda. \\
+
+\\
+
+El \textbf{cierre} del conjunto F es el conjunto de todas las dependencias funcionales que pueden inferirse dado el conjunto F. F+ (el cierre del conjunto F) contiene todas las dependencias funcionales de F.
+
+\newpage
+
+\section{Teoría de las Dependencias Funcionales}
+
+\subsection{Dependencia funcional implicada lógicamente}
+Una dependencia funcional f de R \textbf{está implicada lógicamente por un conjunto de dependencias funcionales F si}, cada vez que F se cumple en una relación, también se cumple f. En otras palabras, dado un esquema relacional r(R) y un conjunto de dependencias funcionales F, decimos que f está implicada lógicamente por F si cualquier relación que satisface todas las dependencias en F también satisface f. \\
+
+Por \textbf{ejemplo}, en un esquema con atributos A, B, C, G, H, I y el conjunto de dependencias: \\
+    $A\xrightarrow{}B$ \\
+    $A\xrightarrow{}C$ \\
+    $CG\xrightarrow{}H$ \\
+    $CG\xrightarrow{}I$ \\
+    $B\xrightarrow{}H$ \\
+
+Podemos demostrar que $A\xrightarrow{}H$ está implicada lógicamente. Si dos tuplas tienen el mismo valor en A, y dado que $A\xrightarrow{}B$ y $B\xrightarrow{}H$, entonces ambas tuplas deben tener el mismo valor en H. Así, podemos deducir que $A\xrightarrow{}H$ también se cumple.
+
+\subsection{Cierre de un conjunto de dependencias funcionales}
+El \textbf{cierre} de un conjunto de dependencias funcionales F, denotado como $F^+$, es el conjunto de todas las dependencias funcionales que \textbf{están implicadas lógicamente por F}. Este cierre contiene todas las dependencias que se derivan de las originales en F. \\
+
+\\
+
+Se dice que un atributo B está \textbf{determinado funcionalmente} por $\alpha$ si $\alpha \xrightarrow{} B$. 
+
+\subsection{Axiomas de Armstrong y reglas adicionales}
+\textbf{Axiomas de Armstrong:}
+\begin{itemize}
+    \item \textbf{Regla de Relfexividad}: si $\alpha$ es un conjunto de atributos y $\beta \subseteq \alpha$, entonces se cumple que $\alpha \xrightarrow{} \beta$.
+    \item \textbf{Regla de la aumentatividad}: si se cumple que $\alpha \xrightarrow{} \beta$ y $\gamma$ es un conjunto de atributos, entonces se cumple que $\gamma\alpha \xrightarrow{} \gamma\beta$.
+    \item \textbf{Regla de la transitividad}: si se cumple que $\alpha \xrightarrow{} \beta$ y que $\beta \xrightarrow{} \gamma$, entonces se cumple que $\alpha \xrightarrow{} \gamma$.
+\end{itemize}
+
+\textbf{Reglas adicionales} que se derivan de los axiomas de Armstrong:
+\begin{itemize}
+    \item \textbf{Regla de la unión}: Si se cumple que $\alpha \xrightarrow{} \beta$ y que $\alpha \xrightarrow{} \gamma$, entonces se cumple que $\alpha \xrightarrow{} \beta\gamma$.
+    \item \textbf{Regla de la descomposición}: si se cumple que $\alpha \xrightarrow{} \beta\gamma$, entonces se cumple que $\alpha \xrightarrow{} \beta$ y que $\alpha \xrightarrow{} \gamma$.
+    \item \textbf{Regla de la pseudotransitividad}: si se cumple que $\alpha \xrightarrow{} \beta$ y que $\gamma\beta \xrightarrow{} \delta$, entonces se cumple que $\alpha\gamma \xrightarrow{} \delta$.
+\end{itemize}
+
+\newpage
+
+\subsection{Recubrimiento canónico}
+El recubrimiento canónico es un \textbf{conjunto simplificado de dependencias funcionales} de un esquema de relación en una base de datos. La finalidad de este conjunto es garantizar que las dependencias funcionales del esquema se cumplan sin tener que evaluar dependencias innecesarias, lo cual facilita la verificación de restricciones en las actualizaciones de la base de datos. \\
+Para que sea efectivo debe cumplir las siguientes propiedades: 
+\begin{itemize}
+    \item \textbf{Mismo cierre}: debe tener el mismo cierre que el conjunto original de dependencias funcionales F. Esto significa que cualquier dependencia funcional que sea cierta en el conjunto original F también debe ser cierta en el recubrimiento canónico $F_c$, y viceversa.
+    \item \textbf{Minimización de atributos}: no debe contener atributos innecesarios (o "\textbf{raros}") en el lado izquierdo o derecho de las dependencias funcionales.
+    \item \textbf{Unicidad en el lado izquierdo}: no debe haber dos dependencias funcionales en el recubrimiento canónico que tengan el mismo conjunto de atributos en el lado izquierdo.
+\end{itemize}
+
+Un \textbf{atributo raro} es aquel que se puede eliminar de una dependencia funcional sin cambiar el cierre del conjunto de dependencias. En otras palabras, si un atributo es raro en una dependencia funcional, su eliminación no afecta las dependencias que el sistema de bases de datos debe garantizar. 
+
+\subsection{Descomposición sin pérdidas}
+Una descomposición sin pérdidas es aquella en la que \textbf{podemos reconstruir la relación original} a partir de sus partes sin perder datos. Si dividimos la relación original R en dos relaciones R1 y R2, la descomposición es sin pérdidas si: $\pi_{R1}(r) \bowtie \pi_{R2}(r) = r$ \\
+Esto significa que si proyectamos (o seleccionamos) los atributos correspondientes de R1 y R2 de la relación r, y luego hacemos una reunión natural de estas proyecciones, obtenemos exactamente el conjunto de tuplas originales de r. \\
+Para asegurar que la descomposición sea sin pérdidas, al menos una de las siguientes condiciones debe cumplirse para las dependencias funcionales en R:
+\begin{itemize}
+    \item $R1 \cap R2 \rightarrow R1$
+    \item $R1 \cap R2 \rightarrow R2$
+\end{itemize}
+
+Una \textbf{descomposición con pérdidas} ocurre cuando, al reconstruir la relación original, obtenemos un conjunto de datos más amplio o incompleto respecto al original. En una descomposición con pérdidas, no es posible reconstruir con exactitud la relación original a partir de sus partes.
+
+\newpage
+
+\subsection{Conservación de las dependencias}
+En el contexto de dependencias funcionales, decimos que una descomposición conserva las dependencias cuando \textbf{todas las dependencias funcionales del esquema original se pueden verificar en las subrelaciones resultantes de la descomposición}, sin necesidad de recomponer los datos. (En cualquiera de las relaciones resultantes, no se tiene que cumpliar la dependencia en todas las relaciones) \\
+
+El \textbf{cierre de un conjunto de atributos}, digamos $\alpha$, \textbf{bajo un conjunto de dependencias funcionales F}, representa todos los atributos que pueden ser determinados a partir de los atributos de $\alpha$ usando las dependencias de F. Este cierre se denota como $\alpha^+$. \\
+
+Para calcular el cierre de un conjunto de atributos $\alpha$ bajo $F$, seguimos estos pasos:
+
+\begin{enumerate}
+    \item \textbf{Inicialización}: Comienza el cierre con el conjunto inicial de atributos, es decir, $\alpha^+ = \alpha$.
+    
+    \item \textbf{Aplicación de las dependencias}: Recorremos las dependencias funcionales en $F$. Si una dependencia funcional $X \rightarrow Y$ cumple que $X \subseteq \alpha^+$, añadimos $Y$ al cierre $\alpha^+$ porque los atributos de $Y$ pueden ser determinados a partir de $\alpha$ usando la dependencia $X \rightarrow Y$.
+    
+    \item \textbf{Repetición}: Repetimos el paso anterior hasta que no haya cambios en $\alpha^+$; es decir, cuando ya no se puedan añadir más atributos al cierre.
+\end{enumerate}
+
+Al finalizar, $\alpha^+$ contendrá todos los atributos que pueden ser inferidos o determinados a partir de $\alpha$ usando $F$.
+
+\newpage
+
+\section{Algoritmo de Bernstein}
+\textbf{Permite descomponer relaciones para eliminar redundancias y cumplir las formas normales}, garantizando que los datos se almacenen sin anomalias. Aquí te explico brevemente cada paso:
+
+\begin{enumerate}
+    \item \textbf{Análisis semántico}: El primer paso es entender los atributos de la relación que estamos estudiando, creando la \textbf{relación universal} \( U \), que contiene todos los atributos relevantes. Además, se debe identificar el conjunto de \textbf{dependencias funcionales} \( F \), que define cómo los valores de ciertos atributos dependen de otros en la relación.
+    
+    \item \textbf{Primera Forma Normal (1FN)}: Aquí se eliminan atributos \textbf{compuestos o multivalorados}. Esto implica que cada atributo contenga un solo valor por fila, asegurando que todos los datos son atómicos.
+    
+    \item \textbf{Recubrimiento Canónico del conjunto \( F \)}: Este paso simplifica el conjunto de dependencias funcionales.
+    \begin{itemize}
+        \item \textbf{Descomposición}: Aplicando las reglas de Armstrong, descomponemos dependencias funcionales complejas en dependencias más simples.
+        \item \textbf{Eliminación de dependencias redundantes}: Quitamos aquellas que son \textbf{implicadas lógicamente} por otras, reduciendo redundancia.
+        \item \textbf{Unión}: Reagrupamos dependencias funcionales cuando sea posible, combinando aquellas que tienen el mismo atributo en la parte izquierda de la dependencia.
+    \end{itemize}
+    
+    \item \textbf{Cálculo de claves candidatas y verificación de BCNF}: Se calculan las \textbf{claves candidatas} de la relación (conjuntos mínimos de atributos que determinan todos los demás). Esto permite verificar si la relación cumple la \textbf{Forma Normal de Boyce-Codd (BCNF)}. Si no la cumple, se procede con los siguientes pasos.
+    
+    \item \textbf{Descomposición por grupos de atributos equivalentes}: Identificamos grupos de atributos que dependen unos de otros y los dividimos en nuevas relaciones independientes, de manera que cada uno mantenga sus dependencias funcionales y minimice la redundancia.
+    
+    \item \textbf{Descomposición por eliminación de dependencias funcionales}: Finalmente, eliminamos las dependencias funcionales que violen las condiciones de la BCNF, asegurando que cada relación esté en la forma más alta posible y se eviten dependencias no deseadas entre atributos.
+\end{enumerate}
+
+Este algoritmo lleva a las relaciones a una estructura normalizada en la que las dependencias funcionales están mejor organizadas, eliminando redundancias y facilitando la integridad de los datos.
+
+\newpage
+
+\section{Otras formas normales}
+\begin{itemize}
+    \item \textbf{Dependencia multivalorada}: dependencia entre conjuntos de atributos A, B y C con valores independientes de modo que para cada valor de A hay un conjunto de valores de B y un conjunto de valores de C.
+    \item \textbf{Relación en Cuarta Forma Normal (4FN)}: relación que está en FNBC y no contiene dependencias multivaluadas.
+    \item \textbf{Relación en Quinta Forma Normal (5FN)}: relación que no presenta dependencias de combinación (propiedad de la descomposición de relaciones que garantiza que no se generan tuplas incorrectas al volver a combinar relaciones de una descomposición mediante una operación de reunión natural).
+\end{itemize}
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Captura_de_pantalla_20241103_122101.png}
+    \caption{Características de los datos}
+    \label{fig:etiqueta}
+\end{figure}
+\end{comment}
+
+\end{document}
