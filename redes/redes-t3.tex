@@ -1,0 +1,244 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Redes Tema 3. Capa de transporte}
+\author{Martín González Dios}
+
+\begin{document}
+\maketitle
+
+En el \textbf{origen} prepara los mensajes de las aplicaciones para ser transmitidos y en el \textbf{destino} recupera los mensajes y los entrega a las aplicaciones. Solo está implementada (la capa de transporte) en los sistemas finales. \\
+
+En TCP/IP prepara los mensajes para transmitirlos por un canal no fiable (red de datagramas, IP,
+servicio de mejor esfuerzo) usando los protocolos de transporte \textbf{TCP} (fragmenta los mensajes en
+segmentos a los que les añade su cabecera) o \textbf{UDP} (solo añade la cabecera). \\
+
+Los mensajes pasan de la capa de aplicación a la de transporte a través de \textbf{sockets}. Los procesos escriben y leen del socket, la capa de transporte recorre todos los sockets abiertos, procesa los mensajes y los envía a la capa de red (\textbf{multiplexación}) y recoge los segmentos de la capa de red para reconstruir los mensajes y colocarlos en su socket destino (\textbf{demultiplexación}), el cual se identifica por los números de puerto de la cabecera del segmento (int 16 bits). \\
+
+En sockets sin conexión (\textbf{UDP}) este se identifica por la IP y el puerto destino, haciendo que segmentos de distinto host con mismo puerto destino sean recogidos por el mismo proceso. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241030_165248.png} % Ajusta el ancho
+    \caption{Multiplexación con sockets sin conexión (UDP)}
+    \label{fig:etiqueta}
+\end{figure}
+
+En sockets orientados a conexión (\textbf{TCP}) el socket se identifica por la tupla IP origen, IP destino, puerto origen y puerto destino, por lo que segmentos de distinto host o puerto de origen con igual puerto destino irán a sockets distintos y pueden ser atendidos por procesos/hilos distintos. En TCP hay 1 socket servidor (espera conexiones de clientes) y varios de conexión (transmiten los datos). \\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241030_165949.png} % Ajusta el ancho
+    \caption{Multiplexación con sockets orientados a conexión (en TCP)}
+    \label{fig:etiqueta}
+\end{figure}
+
+\newpage
+
+\section{UDP(Protocolo de datagramas de usuario)}
+Es \textbf{simple} y \textbf{poco sofisticado}, hace casi lo mínimo (multiplexación/demultiplexación y comprobación de errores). \\
+
+En origen \textbf{añade} una \textbf{cabecera de 4 campos} (puerto origen, puerto destino, bytes del segmento: cabecera + datos y suma de comprobación) al mensaje \textbf{formando un segmento}. En destino comprueba si el paquete llegó sin errores para entregarlo o no. \\
+
+Es un \textbf{protocolo sin conexión} (sin acuerdo previo emisor-receptor → no hay retardo estableciendo la conexión y sin retransmisión en caso de error) y \textbf{sin estado} (cada segmento es independiente, no hay segmentación ya que no hay información para reconstruir los mensajes, lo que hace más rápido el procesamiento y usa menos recursos). Usa \textbf{cabeceras más pequeñas} y controla más la aplicación. \\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241030_170410.png} % Ajusta el ancho
+    \caption{Estructura de UDP}
+    \label{fig:etiqueta}
+\end{figure}
+
+\section{Transmisión fiable}
+Se basa en los protocolos de \textbf{retransmisión de paquetes con errores}. Usan protocolos \textbf{ARQ} (Automatic Repeat reQuest) que pueden \textbf{pasar y esperar} (se envía un paquete y se espera la confirmación) o de \textbf{ventana deslizante} (se envían varios paquetes antes de la confirmación). Se consideran \textbf{enlaces bidireccionales} (full duplex) y se numeran los paquetes de 0 a $2^n$ – 1 (n bits). \\
+
+\newpage
+
+\subsection{Protocolo ARQ parar y esperar} 
+\begin{itemize}
+    \item Sin errores: receptor devuelve ACK con el no del siguiente paquete.
+    \item Pérdida de paquetes/paquete con errores: receptor no devuelve ACK, timeout y retransmisión.
+    \item Pérdida ACK: timeout y retransmisión, el receptor recibe un duplicado que descarta y envía ACK.
+    \item Timeout: si paquetes y ACKs llegan con retraso se reenvían ignorándolos por duplicados.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.1\textwidth]{Captura_de_pantalla_20241030_171145.png} % Ajusta el ancho
+    \caption{Casos ARQ parar y esperar}
+    \label{fig:etiqueta}
+\end{figure}
+
+Hay \textbf{variantes} como \textbf{NAK} que indica la recepción de un paquete con errores y no se espera timeout.  Otra es que 2 ACKs iguales equivalgan a un NAK: un paquete con errores devuelve el ACK del último paquete correcto. O que 3 ACKs equivalgan a un NAK, resolviendo ciertos conflictos. \\
+ 
+El principal \textbf{inconveniente} de este protocolo es la \textbf{poca utilización del enlace}. \\
+
+\subsection{Protocolo ARQ de ventana deslizante}
+El emisor envía N paquetes antes de recibir los ACKs. \\
+\textbf{Utilización del enlace} por parte del \textbf{emisor}: $U=\frac{t_{trans}}{RTT+t_{trans}}$ \\
+\textbf{Tiempo útil} en el emisor: $N*t_{trans}$ \\
+\textbf{Tiempo total}: $t_{trans} + RTT$ \\
+U = 1 si $N*t_{trans} \geq t_{trans} + RTT \rightarrow N \geq 1 + RTT/t_{trans}$ \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Captura_de_pantalla_20241030_172116.png} % Ajusta el ancho
+    \caption{Utilización del enlace}
+    \label{fig:etiqueta}
+\end{figure}
+
+\newpage
+
+Se requiere que el \textbf{rango de números de secuencia} abarque al menos el \textbf{doble del tamaño de la ventana emisora} (conjunto de N paquetes que el emisor puede enviar o que están pendientes de confirmación) y que \textbf{emisor y receptor} puedan \textbf{almacenar más de un paquete}. \\
+
+La \textbf{ventana receptora} es el conjunto de N paquetes que el receptor puede aceptar o está procesando.
+\begin{itemize}
+    \item \textbf{Go Back N} (Retroceder N): el receptor \textbf{sólo acepta paquetes en orden}. Si un paquete llega con errores o no llega se descartan los siguientes y si expira un timeout se retransmiten ese y los siguientes. Los ACKs implican a todos los paquetes previos (acumulativos).
+    
+    \item \textbf{Repetición selectiva}: el receptor \textbf{acepta paquetes fuera de orden}, retransmitiendo solo los erróneos o los que no llegan. Se debe enviar el ACK de cada paquete recibido.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.6\textwidth]{Captura_de_pantalla_20241030_172650.png} % Ajusta el ancho
+    \caption{Retroceder N y repetición selectiva}
+    \label{fig:etiqueta}
+\end{figure}
+
+
+\section{TCP(Protocolo de control de transmisión)}
+Aplica los principios de \textbf{transmisión fiable} y usa números de secuencia (32 bits) que \textbf{identifican bytes, no segmentos}. Empiezan por un número aleatorio x que incrementa en x + n bytes. \textbf{Los ACKs indican el siguiente byte a recibir} y también pueden transmitirse con datos (superposición o piggybacking). Hay un tiempo máximo de espera para mandar datos, si no envía solo el ACK. \\
+
+En este protocolo el emisor usa \textbf{temporizadores para la transmisión}, que se recomienda que sea único (al llegar un ACK o retransmitir un segmento se reinicia). \textbf{Usa ventana deslizante, ACKs acumulativos y solo retransmite segmentos no confirmados}. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.2\textwidth]{Captura_de_pantalla_20241030_174737.png} % Ajusta el ancho
+    \caption{Números de secuencia}
+    \label{fig:etiqueta}
+\end{figure}
+
+\newpage
+
+La estimación del tiempo de espera sigue las siguientes \textbf{fórmulas}: \\
+\textbf{Temporizador} = EstimacionRTT + 4DevRTT \\
+\textbf{EstimacionRTT} = (1-$\alpha$)EstimacionRTT + $\alpha$ MuestraRTT \\
+\textbf{DevRTT} = (1-$\beta$)DevRTT + $\beta$ $|$MuestraRTT + EstimacionRTT$|$ \\
+DevRTT es una medida de la variación del RTT, y en general $\alpha$=0.125 y $\beta$=0.25  \\
+La estimación del RTT es en base a  segmentos transmitidos y no confirmados (no retransmitidos) \\
+*Al expirar el temporizador, el emisor duplica el tiempo de espera.\\
+
+\\
+
+Cuando el \textbf{receptor} recibe un segmento con mayor número del esperado \textbf{envía un ACK duplicado} del último segmento correctamente recibido. Al recibir \textbf{3 ACKs duplicados} (el cuarto) se interpreta como un \textbf{NAK} y se realiza una retransmisión rápida. En este caso el problema es \textbf{leve}, \textbf{si expira el temporizador} se pierden los segmentos y los ACKs y se vuelve \textbf{grave}. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Captura_de_pantalla_20241030_180145.png} % Ajusta el ancho
+    \caption{Retransmisión rápida}
+    \label{fig:etiqueta}
+\end{figure}
+
+El TCP tiene \textbf{control de flujo} que indica el \textbf{ritmo al que puede recibir datos}. El receptor indica el tamaño de su ventana de recepción, el emisor fija su ventana de envío a ese valor para lo que existe un campo en la cabecera TCP. \textbf{El tamaño de la ventana puede modificarse en cada envío}. \\
+
+\textbf{Conexión}: acuerdo en \textbf{tres fases}:
+\begin{itemize}
+    \item SYN=1, cuando se envía por primera vez x o y (se consume un número de secuencia)
+    \item ACK=1, cuando se confirma un segmento 
+    \item En la tercera fase ya se pueden enviar datos
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241031_093809.png} % Ajusta el ancho
+    \caption{Conexión}
+    \label{fig:etiqueta}
+\end{figure}
+
+\newpage
+
+\textbf{Desconexión}: en \textbf{dos fases}: cada una para desconectar la transmisión en un sentido. Se podría desconectar en un sentido y seguir transmitiendo en el otro. \\
+FIN=1, solicitud de desconexión (se consume un número de secuencia)
+ACK=1, aceptación
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241031_094254.png} % Ajusta el ancho
+    \caption{Desconexión}
+    \label{fig:etiqueta}
+\end{figure}
+
+\\
+
+Una vez establecida la conexión comienza la \textbf{transmisión}. La aplicación pasa los datos a la capa de transporte (escribe en el socket) que los va acumulando. Cuando el número de bytes supera el \textbf{MSS} (maximun segment size), la aplicación fuerza el envío (activa el flag PSH) o un temporizador llega a 0, se dispara la transmisión de un segmento (TPC genera el segmento y se lo pasa a IP). \\
+\\
+El envío A → B también \textbf{debe incluir el ACK} (piggybacking). 
+\begin{itemize}
+    \item Si el receptor recibe un segmento en orden, el anterior fue confirmado y no tiene datos para enviar, retrasa el ACK hasta recibir otro segmento o hasta que transcurra cierto tiempo.
+    
+    \item Si llega un segmento esperado y no se confirmó el anterior se envía el ACK.
+    
+    \item Si el segmento que llega tiene un no de secuencia mayor del esperado se envía un ACK con el número de secuencia esperado.
+    
+    \item Si llega un segmento que faltaba se envía un ACK con el siguiente esperado (acumulativo).
+    
+    \item Si llega un segmento duplicado se descarta y se envía un ACK con el esperado.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Captura_de_pantalla_20241031_095046.png} % Ajusta el ancho
+    \caption{Cabecera TCP}
+    \label{fig:etiqueta}
+\end{figure}
+
+\newpage
+
+\section{Control de congestión}
+
+Los recursos de la red deben repartirse entre las \textbf{peticiones}. Si hay demasiados paquetes en la red se producen \textbf{retardos en las transmisiones} y se \textbf{pierden paquetes}. Esto se produce usualmente por el \textbf{desbordamiento de la memoria de los routers}. Ante estas congestiones los elementos de la red realizan esfuerzos como pre-reservar recursos para evitarla o dejar que ocurra y resolverla después. \\
+Las \textbf{congestiones} pueden originarse por \textbf{diversas causas}: 
+\begin{itemize}
+    \item \textbf{2 emisores, 1 router con capacidad infinita y enlace compartido de velocidad C}. Mientras la tasa de entrada $\lambda_{in}$ sea $\leq$ C/2 la tasa de salida $\lambda_{out}$ será igual a la de entrada. \\
+    Si $\lambda_{in}$ $>$ C/2 el enlace no puede responder, los paquetes se acumulan en la cola del router y aumenta el retardo.
+
+    \item \textbf{2 emisores, 1 router con memoria finita y enlace compartido de velocidad C}. Siendo $\lambda'_{in}$ la carga ofrecida al enlace con datos originales y retransmitidos, mientras sea $\leq$ C/2 el router puede manejar la carga. Si excede C/2 la memoria del router no llega, causando pérdidas y aumentando el retardo por la retransmisión de paquetes.
+
+    \item \textbf{Varios emisores, routers de memoria finita y varios enlaces}. Mientras la tasa de transmisión es baja los paquetes se envían y procesan correctamente con un retardo finito. Si aumenta demasiado los buffers de los routers se llenan, perdiendo paquetes y disminuyendo la tasa de entrega efectiva $\lambda_{out}$ que puede llegar a 0 por la saturación.
+    
+\end{itemize}
+
+Por esto se necesitan \textbf{mecanismos de control de congestión}, que en TCP/IP están principalmente en TCP. Estos se basan en la \textbf{adecuación} de la \textbf{tasa de envío} del \textbf{emisor} \textbf{según la congestión} que percibe (considera congestión al expirar un temporizador o recibir 3 ACKs duplicados). \\
+En el emisor se definen la \textbf{ventana de congestión} (se actualiza según el caso) y el \textbf{RTT} (se estima periódicamente calculando el tiempo desde el envío de un segmento hasta su ACK). \\
+\textbf{Tasa de envío} = $\frac{ventana De Congestión}{RTT}$(bytes/segundo) \\
+
+\\
+
+Para \textbf{actualizar la ventana de congestión} se determina la capacidad inicial de la red con el \textbf{inicio lento} (comienza con una tasa de envío conservadora que va aumentando exponencialmente). En cierto punto se aplica el \textbf{AIMD} (incremento aditivo/decremento multiplicativo) que va aumentando o disminuyendo la ventana para mantener la tasa controlada. En caso de congestión se aplica la \textbf{recuperación rápida}, que reduce la ventana sin llegar al inicio lento. \\
+
+Existe también la \textbf{notificación explícita de congestión} (\textbf{ECN}). Se da cuando un router congestionado activa unos bits en la cabecera IP, haciendo que el receptor TCP active el bit ECE (Eco de ECN) y que el emisor reduzca la ventana de congestión y active el bit CWR. \\
+
+La compartición de un enlace de capacidad limitada no es imparcial.
+\begin{itemize}
+    \item Dos conexiones TCP irán repartiendo la capacidad del enlace de forma variable.
+    \item Entre una conexión TCP y una UDP, la UDP acaparará la mayor parte de la capacidad.
+    \item Entre una conexión TCP y 9 conexiones TCP paralelas, la primera usará 1/10 y la segunda 9/10.
+\end{itemize}
+
+
+
+
+
+
+
+\end{document}
