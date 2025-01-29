@@ -1,0 +1,178 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{BDI Tema 7. SQL: otros elementos.}
+\author{Martín González Dios}
+
+\begin{document}
+\maketitle
+
+\section{Transacciones}
+\subsection{Definiciones importantes}
+\begin{itemize}
+\item Transacción: acción o serie de acciones, llevadas a cabo por un usuario o por una aplicación, que leen y/o actualizan el contenido de la BD.
+\item Atomicidad: propiedad de una transacción que garantiza su indivisibilidad (o bien se realizan todas las acciones en su totalidad o bien la BD vuelve a su estado inicial como si no se realizara nada).
+\end{itemize}
+Los gestores de bases de datos funcionan, por defecto, realizando un COMMIT de confirmación después de cada instrucción (se denomina autocommit). Asumen, por tanto, que cada tarea lógica está formada por una única instrucción. \\
+\textbf{Commit work} (compromiso): compromete la transacción actual; es decir, hace que las actualizaciones realizadas por la transacción pasen a ser permanentes en la BD. \\
+\textbf{Rollback work} (retroceso): provoca el retroceso de la transacción actual; es decir, deshace todas las actualizaciones realizadas por las sentencias de la transacción. \\
+Una vez que la transacción ha ejecutado commit work, sus efectos ya no se pueden deshacer con rollback work.
+\subsection{Violación de la restricción de integridad durante una transacción}
+Existe la cláusula initially deferred para especificar la restricción, la cual comprueba al final de la transacción y no en pasos intermedios si hay violación de la restricción de integridad. \\
+Las restricciones pueden especificarse de manera alternativa con deferrable, de manera predeterminada se comprueba inmediatamente, pero puede diferirse si se desea. Para las restricciones declaradas como diferibles, la ejecución de la instrucción set contrains lista-resticciones deferred como parte de una transacción hace que se difiera la comprobación de las restricciones especificadas hasta el final de esa transacción.
+
+\newpage
+
+\section{Tipos de datos y esquemas de SQL}
+\subsection{Tipos fecha y hora en SQL}
+\begin{itemize}
+\item \textbf{date}. Fecha del calendario que contiene el año (con cuatro dígitos), el mes y el día del mes. ´2001-04-25´
+
+\item \textbf{time}. La hora del día, en horas, minutos y segundos.
+También es posible almacenar la información del huso horario
+junto a la hora especificando time with timezone. ´09:30:00´
+
+\item \textbf{timestamp}. Una combinación de date y time. ambién se almacena información sobre el huso horario si se especifica with timezone. ´2001-04-25 10:29:01.45´
+\end{itemize}
+
+Se pueden usar expresiones de la forma cast e as t para conver-
+tir una cadena de caracteres (o una expresión de tipo cadena de
+caracteres) e al tipo t, donde t es de tipo date, time o timestamp. \\
+
+SQL permite realizar operaciones de comparación sobre todos
+los tipos de datos que se han mencionado, así como operaciones
+aritméticas y de comparación sobre los diferentes tipos de datos
+numéricos. SQL también proporciona un tipo de datos denominado
+\textbf{interval} y permite realizar cálculos basados en fechas, horas e intervalos. 
+
+\subsection{Valores predeterminados}
+create table estudiante \\
+(ID varchar (5), \\
+nombre varchar (20) not null, \\
+nombredept varchar (20), \\
+totcréditos numeric (3,0) \textbf{default} 0, \\
+primary key (ID)); \\
+
+\subsection{Índices}
+Un índice sobre un atributo de una relación es una estructura de
+datos que permite al sistema de bases de datos encontrar de forma
+eficiente aquellas tuplas de la relación que tienen un determinado
+valor del atributo, sin tener que explorar todas las tuplas de la re-
+lación. \\
+create \textbf{index} estudianteIDíndice \textbf{on} estudiante(ID);
+
+\subsection{Tipos de datos para objetos grandes}
+Tipos de datos para objetos de gran tamaño para los datos de caracteres (\textbf{clob}) y para los datos
+binarios (\textbf{blob}). Las letras «lob» de estos tipos de datos significan
+«objeto grande» (large object). Por ejemplo, se pueden declarar los
+atributos:
+revista clob(10KB)
+imagen blob(10MB)
+película blob(2GB)
+
+\newpage
+
+\subsection{Tipos definidos por los usuarios}
+Hay 2 formas; la primera se denomina \textbf{alias de tipos} (distinct types). La otra forma, denominada \textbf{tipos de datos estructurados}, permite la creación de tipos de datos
+complejos. \\
+La cláusula create type puede utilizarse para definir tipos de
+datos nuevos. Por ejemplo, las sentencias: \\
+create type Euros as numeric(12,2) final; \\
+create type Libras as numeric(12,2) final; \\
+Como consecuencia del control riguroso de los tipos de datos, la
+expresión (department.budget+20) no se aceptaría, ya que el atributo y la constante entera 20 tienen diferentes tipos de datos. Los valores de un tipo de datos pueden convertirse (cast) a otro dominio como se muestra a continuación: \\
+cast (departamento.presupuesto to numeric(12,2)) \\
+\\
+\textbf{Dominio}: capaz de añadir restricciones de integridad a un tipo subyacente. Por ejemplo, se podría definir el tipo de dominio DEuros de la manera siguiente: \\
+create domain DEuros as numeric(12,2) not null; \\ 
+\\
+Existen 2 diferencias entre los tipos de datos y los dominios: 
+\begin{itemize}
+\item Sobre los dominios se pueden especificar restricciones, como
+not null, y valores predeterminados para las variables del tipo
+de dominio, pero no se pueden especificar restricciones ni va-
+lores predeterminados sobre los tipos de datos definidos por
+los usuarios.
+
+\item Los dominios no tienen tipos estrictos. En consecuencia, los va-
+lores de un tipo de dominio pueden asignarse a los de otro tipo
+de dominio, siempre y cuando los tipos subyacentes sean com-
+patibles.
+
+\end{itemize}
+
+La cláusula \textbf{check} permite al diseñador del esquema especificar un predicado que todos los atributos declarados deben satisfacer en este dominio. \\
+\\
+create domain SueldoAnual numeric(8,2) \\
+constraint valorSueldoTest \\
+check(value $>=$ 29000.00); \\
+\\
+La cláusula constraint valorSueldoTest es opcional, y se usa para dar el nombre valorSueldoTest a la restricción.
+
+\subsection{Extensiones a la creación de tablas}
+Extensión create table like para esta tarea: \\
+create table tempProfesor like profesor; \\
+\\
+Si se omite la cláusula \textbf{with data}, la tabla se crea pero no se rellena con datos. \\
+La sentencia anterior \textbf{create table… as} se parece mucho a la
+sentencia \textbf{create view} y ambas se definen mediante consultas. La
+diferencia más importante es que el contenido de la tabla se inserta
+cuando se crea, mientras que el contenido de una vista siempre refleja el resultado actualizado de la consulta.
+
+\subsection{Esquemas, catálogos y entornos}
+Los sistemas de bases de datos ofrecen una jerarquía de tres niveles para los nombres de las relaciones. El nivel superior de la jerarquía consta de \textbf{catálogos}, cada uno de los cuales puede contener \textbf{esquemas}. Los objetos de SQL, como las \textbf{relaciones} y las vistas, están contenidos en esquemas. 
+
+\newpage
+
+\section{Autorización}
+La autorización en bases de datos permite asignar distintos privilegios a los usuarios para interactuar con partes específicas de la base de datos. Estos \textbf{privilegios} incluyen lectura, inserción, actualización y borrado de datos. \\
+La norma de SQL incluye los privilegios \textbf{select}, \textbf{insert}, \textbf{update} y
+\textbf{delete}. El privilegio \textbf{all privileges} se puede utilizar como forma
+abreviada de todos los privilegios que se pueden conceder. \\
+La instrucción grant se utiliza para conceder autorizaciones. La forma básica de esta sentencia es: \\
+\textbf{grant} <lista de privilegios> \\
+\textbf{on} <nombre de relación o de vista> \\
+\textbf{to} <lista de usuarios o de roles>; \\
+\\
+La autorización \textbf{select} sobre una relación es necesaria para leer las tuplas de una relación. \\
+La autorización \textbf{update} sobre una relación permite a los usuarios actualizar cualquier tupla de la relación. \\
+La autorización \textbf{insert} sobre una relación permite a los usuarios insertar tuplas en la relación. \\
+La autorización \textbf{delete} sobre una relación permite a los usuarios borrar tuplas de una relación. \\
+El nombre de usuario \textbf{public} hace referencia a todos los usuarios actuales y futuros del sistema. Por tanto, los privilegios concedidos a public se garantizan de manera implícita a todos los usuarios actuales y futuros. \\
+Para revocar una autorización se emplea la sentencia revoke. Su forma es casi idéntica a la de grant: \\
+\textbf{revoke} $<$lista de privilegios$>$ \\
+\textbf{on} $<$nombre de la relación o nombre de la vista$>$ \\
+\textbf{from} $<$lista de usuarios o de roles$>$; 
+
+\subsection{Roles}
+El concepto de \textbf{roles} permite asignar permisos específicos a grupos de usuarios en función de sus responsabilidades, facilitando la gestión de autorizaciones. \\
+Los permisos se asignan a roles con la instrucción grant, como si fueran usuarios, y los roles pueden asignarse a otros roles, creando una jerarquía de permisos. 
+
+\subsection{Autorización sobre vistas}
+Permite restringir el acceso a datos específicos en la base de datos. Por ejemplo, se puede crear una vista profesorGeología que muestre solo información del departamento de Geología para los miembros de la dirección, sin darles acceso a toda la tabla de profesor. El sistema verifica que el usuario tenga los permisos necesarios en la tabla original. \\
+
+\subsection{Transferencia de privilegios}
+Permite a un usuario que recibe una autorización otorgarla a otros usuarios, pero esto solo es posible si el privilegio se concede con la opción \textbf{with grant option}. Por ejemplo, el privilegio select se puede otorgar a Amit en la tabla departamento con esta opción para que Amit pueda concederlo a otros. \\ 
+\\
+grant select on departamento to Amit \textbf{with grant option}; \\
+\\
+El administrador de la base de datos, como creador del objeto, conserva siempre todos los permisos, incluidos los de delegación. Las transferencias de autorizaciones pueden representarse mediante un grafo (\textbf{grafo de autorización}), donde cada nodo es un usuario y una arista indica que un usuario ha concedido permisos a otro. Un usuario tiene un permiso si existe un camino en el grafo desde el administrador hasta él.
+
+\subsection{Revocación de privilegios}
+Permite retirar permisos concedidos a un usuario. Cuando se revoca un permiso, puede ocurrir una \textbf{revocación en cascada}, que elimina los permisos de otros usuarios si dependían del permiso inicial revocado. Este es el comportamiento por defecto, aunque se puede usar \textbf{restrict} para evitarlo y cancelar la revocación si se afecta a otros usuarios. \\
+
+SQL también permite revocar solo la capacidad de otorgar permisos, sin quitar el permiso en sí, usando \textbf{revoke grant option for}. Para casos complejos, como cuando roles jerárquicos otorgan privilegios, SQL permite el uso de \textbf{granted by current\_role}, para asegurar que un rol intermedio (como decano) no pierda permisos clave al revocar un rol específico.
+
+\end{document}
