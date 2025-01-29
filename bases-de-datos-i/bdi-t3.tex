@@ -1,0 +1,79 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 3. Transformación del MER al MR}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Transformación básica}
+\begin{itemize}
+    \item \textbf{Atributo compuesto}: se descompone en atributos atómicos.
+
+    \item Atributo multivalorado: se quita el atributo de la entidad en la que estaba y se crea una tabla con una copia de la clave primaria y el atributo multivalorado.
+
+    \item \textbf{Entidad fuerte}: se crea una tabla que incluya todos los atributos atómicos. PK: clave primaria original.
+
+    \item \textbf{Entidad débil}: se crea una tabla que incluya todos los atributos atómicos y una copia de la clave primaria de la entidad indentificadora. PK: copia de la clave primaria y la clave primaria parcial. FK: copia de la clave primaria.
+
+    \item \textbf{Relación binaria 1:N}: se incluye una copia de la clave primaria del lado 1 en la tabla del lado N; se incluyen los atributos de la relación en la tabla del lado N. FK(lado N): copia de la clave primaria.
+
+    \item \textbf{Relación binaria N:N}: se crea una tabla con copias de las claves primarias de las entidades; se añaden a la tabla los atributos de la relación. PK: copias de claves primarias y clave primaria parcial. FK: copias de claves primarias.
+
+    \item \textbf{Relaciones ternarias y superiores}: se crea una tabla con copias de las claves primarias de las entidades; se añaden a la tabla los atributos de la relación. PK: copias de claves primarias de lados N y clave primaria parcial. FK: copias de claves primarias.
+
+    \item \textbf{Relación binaria 1:1 (participación obligatoria en ambos lados)}: combinar entidades en una tabla. PK: una de las claves primarias.
+
+    \item \textbf{Relación binaria 1:1 (participación obligatoria en un lado)}: como la relación binaria 1:N; lado opcional como lado 1; lado obligatorio como lado N.
+
+    \item \textbf{Relación binaria 1:1 (participación opcional en ambos lados)}: como la relación binaria 1:N escogiendo el lado de forma arbitraria.
+\end{itemize}
+
+\newpage
+
+\section{Transformación en jerarquías}
+
+\begin{itemize}
+    \item \textbf{Jerarquía total, solapada}: una tabla con todos los atributos de la jerarquía y con discriminantes binarios (tantos como subclases) para saber a que subclases pertenece el elemento. PK: clave primaria superclase.
+
+    \item \textbf{Jerarquía parcial, solapada}: una tabla para la superclase con todos sus atributos. PK: clave primaria superclase. Otra tabla para todas las subclases con una copia de la clave primaria de la superclase, con todos los atributos de las subclases y con discriminantes binarios (tantos como subclases) para saber a que subclases pertenece el elemento. PK: copia clave primaria superclase. FK: copia clave primaria superclase.
+
+    \item \textbf{Jerarquía total, disjunta}: una tabla para cada combinación superclase/subclase con todos los atributos de la superclase y de la subclase. PK: clave primaria superclase.
+
+    \item \textbf{Jerarquía parcial, disjunta}: una tabla para la superclase con todos sus atributos. PK: clave primaria superclase. Una tabla para cada subclase con todos los atributos de la subclase y una copia de la clave primaria de la superclase. PK: copia clave primaria superclase. FK: copia clave primaria superclase.
+\end{itemize}
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
