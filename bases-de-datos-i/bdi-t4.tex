@@ -1,0 +1,123 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage{amssymb}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Bases de Datos I Tema 4. Lenguajes formales de consulta}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Lenguajes de consulta relacional}
+(\textbf{Lenguaje relacionalmente completo}: puede producir todas las relaciones)
+Existen 2 tipos:
+\begin{itemize}
+    \item \textbf{Lenguajes procedimentales}: el usuario indica al sistema que lleve a cabo una serie de operaciones en la BD para calcular el resultado deseado.
+
+    \item \textbf{Lenguajes no procedimentales}: el usuario describe la información deseada sin establecer un procedimiento concreto para obtener esa información. 
+\end{itemize}
+
+\section{Operaciones relacionales}
+Existen 5 operaciones básicas en el Álgebra Relacional: \textbf{selección, proyección, producto cartesiano, unión de conjuntos y diferencia de conjuntos}. \\
+Como todas estas operaciones tienen cómo salida una relación, las operaciones pueden \textbf{concatenarse}.
+
+\section{Álgebra relacional}
+\subsection{Selección}
+Selecciona tuplas que satisfacen un predicado dado, se usa $\sigma$ (sigma) para denotar la selección. \\
+Ejemplo: 
+$$\sigma_{\text{nombre\_dept} = \text{<<Física>>}}(\text{Profesor})$$
+Selecciona las tuplas de la relación Profesor en las que el profesor pertenece al departamento de Física. 
+
+$$\sigma_{\text{nombre\_dept} = \text{<<Física>> AND(capirote) sueldo $>$ 90000}}(\text{Profesor})$$
+
+\subsection{Proyección}
+Operación unaria que devuelve su relación de argumentos, excluyendo algunos atributos. Se denomina por la letra pi ($\pi$). 
+
+$$\pi_{\text{ID, nombre, sueldo}}\text{(Profesor)}$$
+Relación de todos los ID, nombre y sueldo de los profesores.
+
+\newpage
+
+\subsection{Producto cartesiano}
+Permite combinar información de dos relaciones cualesquiera. Se denomina con aspa (X). \textbf{La cantidad de atributos se suma, la cantidad de tuplas se multiplica}. \\
+Es necesario filtrar el producto cartesiano, ya que se generan tuplas sin sentido.
+
+$$\sigma_{\text{DNI, Estudiantes}= \text{estudante, Teléfonos}}\text{(Estudiantes X Teléfonos)}$$
+
+En el caso de que los atributos se llamen igual (DNI y estudiante) puedo hacer una reunión natural. Estudiantes $\Join$ Telefonos es lo mismo que $$\sigma_{\text{DNIest = DNItelf}}\text{(Estudiantes X Teléfonos)}$$
+
+La \textbf{reunión zeta} puede ser vista como una operación que toma dos relaciones (o tablas) y produce una nueva relación que contiene todas las combinaciones de filas de las dos relaciones que satisfacen la condición de unión especificada.
+
+\subsection{Unión, intersección y diferencia de conjuntos}
+\begin{itemize}
+    \item \textbf{Unión}: se indica mediante $\cup$. Se sumas todas las tuplas en una misma tabla.
+
+    \item \textbf{Intersección}: se indica mediante $\cap$. Se interseccionan las tuplas que existan en las 2 tablas.
+
+    \item \textbf{Diferencia de conjuntos}: se indica mediante -. Permite encontrar tuplas que están en una relación, pero no en la otra. 
+\end{itemize}
+
+Estas 3 operaciones requieren que las \textbf{tablas} sean \textbf{compatibles}: 
+\begin{itemize}
+    \item Mismo número de atributos.
+    \item Compatibilidad sintáctica (los atributos tienen que tener el mismo tipo de dato).
+\end{itemize}
+
+\section{Agregación}
+Toman una colección de valores y devuelven como resultado un único valor. Se representa como $G$. 
+$$G_{\text{contar}}\text{(Matrículas) = cuantas tuplas tiene la tabla Matrículas}$$
+
+$$G_{\text{sumar(sueldo)}}\text{(Profesor) = suma de los sueldos de la tabla Profesor}$$
+
+\section{Cálculo relacional de tuplas}
+Es un lenguaje de consulta no procedimental para manipular el MR. \\
+\{t$|$P(t)\} \\
+
+$$\text{\{t}|\text{t}\in \text{Matrículas AND t(calificación) = No apto\}}$$
+Las tuplas que pertenecen a Matrículas y el atributo calificación sea No Apto. \\
+
+$$\text{\{t }|\text{ t}\in \text{Estudiantes } \exists \text{s} \in \text{ Matrículas } | \text{ t(dni) = s(estudiante) AND s(calificación) = Apto\}}$$
+
+\newpage
+
+\section{Cáclulo relacional de dominios}
+Es otro lenguaje de consulta no procedimental para manipular el MR. \\
+\{$<$dni, nombre, apellido1, apellido2, fechaNacimiento$>$ $|$ P(dni, nombre, ...)\} \\
+
+\{$<$estudiante, materia, año, mes, calificación$>$ $|$ $<$e, m, a, ms, c$>$ $\in$ Matrículas AND c = No apto\} \\
+
+\{$<$dni, n, ap1, ap2$>$ $|$ $<$dni, n, ap1, ap2$>$ $\in$ Estudiantes AND $<$e, c$>$ $\in$ Matrículas AND e = dni AND c = Apto\}
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
