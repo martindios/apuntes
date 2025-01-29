@@ -6,9 +6,9 @@ Este repositorio contiene apuntes para la carrera de Ingeniería Informática. L
 
 En este repositorio encontrarás:
 
-- **PDFs renderizados en LaTeX**: Documentos en formato PDF que contienen los apuntes.
-- **Archivos .tex**: Los archivos fuente en LaTeX utilizados para generar los PDFs.
-- **Imágenes**: Recursos gráficos utilizados en los documentos .tex.
+- **PDFs renderizados en LaTeX**: documentos en formato PDF que contienen los apuntes.
+- **Archivos .tex**: los archivos fuente en LaTeX utilizados para generar los PDFs.
+- **Imágenes**: recursos gráficos utilizados en los documentos .tex.
 
 ## Notas Importantes
 
