@@ -1,0 +1,153 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{AED Tema 9. Estategias algorítmicas}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Divide y vencerás}
+Consiste en \textbf{descomponer un problema en un conjunto de problemas más pequeños} que se puedan resolver de forma independiente y combinar sus soluciones para obtener la solución al problema original. Los subproblemas se pueden ir dividiendo a su vez en problemas más pequeños hasta llegar a una solución trivial.
+
+Un claro \textbf{problema} a resolver es la \textbf{forma de dividir el problema en subproblemas} de la forma más eficiente. Si no es posible hacer esta división de ninguna forma viable, significa que los subproblemas no se pueden resolver de forma independiente y por lo tanto no se puede usar la
+estrategia de divide y vencerás.
+
+Ejemplos: multiplicación de enteros largos, ordenación rápida, etc.
+
+\section{Algoritmos voraces}
+Se parte de una solución vacía y se va \textbf{seleccionando la mejor solución} para cada paso dentro
+de un conjunto de posibles candidatos. Se suelen usar en \textbf{problemas de optimización}.
+
+Componentes de algoritmo voraz:
+\begin{itemize}
+    \item \textbf{C}: conjunto de candidatos que todavía se pueden seleccionar.
+    \item \textbf{S}: candidatos ya seleccionados para la solución.
+    \item \textbf{R}: candidatos seleccionados pero rechazados después.
+    \item \textbf{solución(R)}: función que comprueba si un conjunto de candidatos \textbf{S} es una solución al problema. 
+    \item \textbf{seleccionar(C)}: función que selecciona el mejor elemento de un conjunto \textbf{C} de candidatos.
+    \item \textbf{factible(S, x)}: función que indica si a partir de un conjunto de candidatos \textbf{S} añadiendo otro \textbf{x} se puede llegar a una solución. 
+    \item \textbf{insertar(S, x)}: función que añade un elemento \textbf{x} al conjunto \textbf{S} de candidatos seleccionados para la solución.
+    \item \textbf{objetivo(S)}: función que dada una solución \textbf{S} devuelve el coste asociado a la misma. 
+\end{itemize}
+
+Este tipo de algoritmos suelen tener un \textbf{orden de complejidad polinomial}, lo que los
+hace bastante rápidos, sin embargo no aseguran encontrar la solución óptima, por lo que si se
+necesita ésta, es mejor usar otras estrategias.
+
+Ejemplos: algoritmo de Dijkastra, algoritmo de Prim, etc.
+
+\newpage
+
+\section{Vuelta atrás o backtracking}
+Se puede entender como el \textbf{opuesto a la estrategia voraz}, ya que añade elementos a la
+solución parcial y los \textbf{elimina si no obtiene la solución óptima}. Por ello, se dice que realiza una \textbf{búsqueda exhaustiva y sistemática} del espacio de soluciones. Al probar todas las
+combinaciones posibles, \textbf{se vuelve bastante ineficiente}, pero garantiza encontrar la solución
+óptima. Debido a esto, es muy usado en problema de optimización. \\
+
+Existen diferentes \textbf{tipos de árboles de backtracking}:
+\begin{itemize}
+    \item \textbf{Árboles binarios}: elegir ciertos elementos de entre un conjunto sin importar el orden de los elementos.
+    \item \textbf{Árboles k-narios}: varias opciones para cada $x_i$.
+    \item \textbf{Árboles permutacionales}: los $x_i$ no se pueden repetir.
+    \item \textbf{Árboles combinatorios}: los mismos que con árboles binarios.
+\end{itemize}
+
+\textbf{Componentes del backtracking}:
+\begin{itemize}
+    \item \textbf{s}: solución parcial hasta cierto punto.
+    \item $s_{inicial}$: valor al que se inicializa la solución parcial al empezar el algoritmo. Suele corresponderse con un valor inválido como solución, para evitar confundirla con una solución parcial generada por la ejecución del algoritmo.
+    \item \textbf{nivel}: indica el nivel actual del árbol en el que se encuentra estudiando los candidatos el algoritmo.
+    \item \textbf{fin}: indica si se ha encontrado una solución.
+    \item \textbf{Generar(nivel, s)}: función que genera la solución parcial, resultado de añadir el siguiente candidato del nivel actual.
+    \item \textbf{Solucion(nivel, s)}: función que compueba si la solución parcial actual es una solución válida para el problema.
+    \item \textbf{Criterio(nivel, s)}: función que comprueba si a partir de la solución parcial y desde el nivel actual es posible alcanzar una solución válida. En caso contrario, se rechazan los
+    descendientes en el árbol, teniendo lugar una \textbf{poda de esa rama}.
+    \item \textbf{MasHermanos(nivel, s)}: función que indica si hay más candidatos por estudiar en el nivel actual (hermanos en el árbol de soluciones).
+    \item \textbf{Retroceder(nivel, s)}: retrocede un nivel del árbol de soluciones. Disminuye en 1 el valor de nivel, y posiblemente tendrá que actualizar la solución actual, quitando los elementos retrocedidos.
+    \item Almacenar(s): en el caso de que se quieran \textbf{almacenar todas las soluciones}.
+\end{itemize}
+
+Este tipo de algoritmos suelen tener un \textbf{orden de ejecución factorial o exponencial}, el
+cual, como se dijo anteriormente, puede ser bastante ineficiente, por lo que es mejor intentar
+buscar otro tipo de alternativas algo más rápidas. Una mejora puede ser la de los \textbf{mecanismos
+de poda}, ya que en backtracking su \textbf{comportamiento} suele ser \textbf{impredecible}.
+
+\newpage
+
+\section{Ramificación y poda}
+Se puede interpretar como una mejora de la estrategia de backtracking, ya que sobre un
+esquema muy similar, se centra en mejorar las estrategias de ramificación y de poda. Concretamente se tienen los siguientes cambios:
+\begin{itemize}
+    \item \textbf{Estrategia de ramificación}: el recorrido no tiene porque ser en profundidad como en el caso de backtracking.
+    \item \textbf{Estrategia de poda}: la poda se realiza estimando para cada nodo del árbol unas cotas de beneficio que se pueden obtener a partir del mismo, es decir, si seguimos o no descendiendo por él hacia su descendientes hasta encontrar una solución.
+\end{itemize}
+
+La mejora en la poda supone tener que realizar las \textbf{estimaciones de las cotas antes de explorar} cada nodo, lo que añade algo de complejidad al problema. Sin embargo, estas cotas aseguran
+hacer mejores podas que en el caso de backtracking, reduciendo el espacio de soluciones y por
+tanto la cantidad de nodos a estudiar. \\
+
+A cada \textbf{nodo hay que añadirle 3 campos}: 
+\begin{itemize}
+    \item \textbf{CS}: cota superior, máximo valor que podemos alcanzar a partir del nodo actual.
+    \item \textbf{CI}: cota inferior, mínimo valor que podemos alcanzar a partir del nodo actual.
+    \item \textbf{BE}: beneficio estimado, media entre la CS y la CI. Se usa para estimar que nodo estudiar a continuación en la estrategia de ramificación (seleccionando el de mayor o menor BE
+    entre los posibles candidatos).
+\end{itemize}
+
+Como estructura auxiliar se usa una lista denominada \textbf{lista de nodos vivos (LNV)} en la que se van almacenando todos los nodos generados todavía no estudiados que pueden presentar una solución factible.
+
+Para sacar un nodo de la LNV se sigue una \textbf{estrategia de ramificación} seleccionando el de
+mayor o menor beneficio estimado. Hay \textbf{cuatro posibles casos}:
+
+\begin{itemize}
+    \item \textbf{LC-FIFO}: se selecciona el nodo de \textbf{menor BE} y, en caso de empate, el \textbf{primero que se introdujo}.
+    \item \textbf{MB-FIFO}: se selecciona el nodo de \textbf{mayor BE} y, en caso de empate, el \textbf{primero que se introdujo}.
+    \item \textbf{LC-LIFO}: se selecciona el nodo de \textbf{menor BE} y, en caso de empate, el \textbf{último que se introdujo}.
+    \item \textbf{MB-LIFO}: se selecciona el nodo de \textbf{mayor BE} y, en caso de empate, el \textbf{último que se introdujo}.
+\end{itemize}
+
+Las \textbf{funciones} que intervienen en la estrategia de ramificación y poda son: 
+\begin{itemize}
+    \item \textbf{Seleccionar(LNV)}: selecciona un nodo de la LNV siguiendo la estrategia de ramificación.
+    \item \textbf{Solucion(y)}: comprueba para un nodo \textbf{y} si es una posible solución final del problema.
+    \item \textbf{Valor(y)}: devuelve el valor de su solución actual para un nodo \textbf{y}. 
+\end{itemize}
+
+Generalmente, este tipo de algoritmos \textbf{suelen suponer mejoras sobre la técnica de backtracking}, sin embargo, en el peor caso (cuando apenas se realizan podas), se pueden generar casi tantos nodos como en el backtracking convencional, añadiéndole a mayores el coste que conlleva calcular las cotas de cada nodo y seleccionar un nodo según la estrategia de ramificación. 
+
+Por tanto, debemos escoger entre emplear más tiempo para obtener mejores cotas y así intentar podar más nodos (\textbf{estimaciones precisas de las cotas}) o ahorrar tiempo al obtener cotas menos precisas, pero podando por lo general bastantes menos nodos (\textbf{estimaciones triviales o poco precisas}).
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.45\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
