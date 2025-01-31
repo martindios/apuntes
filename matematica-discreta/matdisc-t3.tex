@@ -1,0 +1,543 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Matemática Discreta Tema 3. Recursividad}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Recursividad}
+
+\textbf{Recursividad}: Una recursión consiste en definir un objeto en términos de sí mismo. \\
+
+\textbf{Sucesiones:} Una sucesión es una aplicación definida como: 
+\[
+N \rightarrow S
+\]
+donde $N$ es el conjunto de los números naturales y $S$ es un conjunto cualquiera.
+
+\paragraph{Ejemplo de sucesión:}
+\begin{itemize}
+    \item $N \rightarrow S = \{7, 17, 27, 37, \dots\}$
+    \item $0 \rightarrow S_0 = \{1, 1, 2, 3, 5, 8, \dots\}$ (Sucesión de Fibonacci)
+    \item $1 \rightarrow S_1 = \{1, 10, 100, 1000, \dots\}$ (Sucesión geométrica)
+\end{itemize}
+
+\paragraph{Definición recursiva de una sucesión específica:}
+Una definición recursiva consta de dos partes:
+\begin{enumerate}
+    \item Uno o más \textbf{términos iniciales}.
+    \item Una \textbf{regla} para determinar los siguientes términos.
+\end{enumerate}
+Esta regla se denomina \textbf{relación de recurrencia}.
+
+\subsection{Relación de recurrencia}
+Una relación de recurrencia para una sucesión $\{a_n\}$ es una ecuación que expresa $a_n$ en términos de uno o más términos anteriores de la sucesión $a_0, a_1, \dots, a_{n-1}$. 
+
+\paragraph{Ejemplos de relaciones de recurrencia:}
+\begin{itemize}
+    \item $a_n = 10 \cdot a_{n-1}$ \hfill \textit{(Ejemplo de progresión geométrica)}
+    \item $a_n = 4 \cdot a_{n-1} + a_{n-2}$ \hfill \textit{(Relación lineal homogénea de orden 2)}
+    \item $a_n = n \cdot a_{n-1}$ \hfill \textit{(Ejemplo donde el coeficiente no es constante)}
+    \item Torres de Hanoi: $H_n = 2 \cdot H_{n-1} + 1$ \hfill \textit{(No homogénea)}
+    \item $a_n = 2^n \cdot n^1 + 3 \cdot a_{n-2}$ \hfill \textit{(No lineal)}
+\end{itemize}
+
+\newpage
+
+\paragraph{Ejemplo detallado: Sucesión de Fibonacci}
+La sucesión de Fibonacci es una sucesión definida recursivamente como:
+\[
+F_0 = 0, \quad F_1 = 1, \quad F_n = F_{n-1} + F_{n-2} \quad \text{para } n \geq 2
+\]
+Los primeros términos de la sucesión son:
+\[
+0, 1, 1, 2, 3, 5, 8, 13, 21, \dots
+\]
+\textbf{Explicación:}
+\begin{itemize}
+    \item Los \textbf{términos iniciales} son $F_0 = 0$ y $F_1 = 1$.
+    \item La \textbf{regla recursiva} es $F_n = F_{n-1} + F_{n-2}$.
+    \item Cada término se calcula sumando los dos términos anteriores.
+\end{itemize}
+
+\paragraph{Ejemplo adicional: Torres de Hanoi}
+La relación de recurrencia para el problema de las Torres de Hanoi es:
+\[
+H_n = 2 \cdot H_{n-1} + 1, \quad H_1 = 1
+\]
+Resolviendo la recurrencia, obtenemos:
+\[
+H_n = 2^n - 1
+\]
+\textbf{Interpretación:} Este resultado indica el número mínimo de movimientos necesarios para resolver el problema de $n$ discos.
+
+\subsection{Clasificación de las relaciones de recurrencia}
+\begin{itemize}
+    \item \textbf{Lineal homogénea}: Los coeficientes son constantes. Ejemplo: $a_n = 4 \cdot a_{n-1} + a_{n-2}$.
+    \item \textbf{No homogénea}: Incluye términos independientes. Ejemplo: $H_n = 2 \cdot H_{n-1} + 1$.
+    \item \textbf{No lineal}: La relación no es lineal. Ejemplo: $a_n = 2^n \cdot n^1 + 3 \cdot a_{n-2}$.
+\end{itemize}
+
+\newpage
+
+\section{Teorema para la Solución de Relaciones de Recurrencia Lineales Homogéneas con Coeficientes Constantes (RRLHCC) con raíces características distintas}
+Sea una relación de recurrencia lineal homogénea con coeficientes constantes (RRLHCC) de orden $k$:
+\[
+a_n = C_1a_{n-1} + C_2a_{n-2} + \dots + C_ka_{n-k}, \quad \text{con } C_k \neq 0,
+\]
+y sea $r_1, r_2, \dots, r_k$ el conjunto de raíces reales y distintas de la ecuación característica asociada. Entonces, la solución general para la recurrencia es de la forma:
+\[
+a_n = \alpha_1 r_1^n + \alpha_2 r_2^n + \dots + \alpha_k r_k^n,
+\]
+donde $\alpha_1, \alpha_2, \dots, \alpha_k$ son constantes reales que dependen de las condiciones iniciales.
+
+\subsection{Demostración breve}
+Cualquier solución de la ecuación de recurrencia se puede expresar como una combinación lineal de potencias de las raíces de la ecuación característica:
+\[
+r^n = C_1 r^{n-1} + C_2 r^{n-2} + \dots + C_k r^{n-k}.
+\]
+De esta forma, obtenemos la ecuación característica de grado $k$:
+\[
+r^k - C_1 r^{k-1} - C_2 r^{k-2} - \dots - C_k = 0.
+\]
+
+\subsection{Ejemplo: relación de recurrencia de Fibonacci}
+Consideremos la relación de recurrencia de Fibonacci:
+\[
+a_n = a_{n-1} + a_{n-2},
+\]
+con condiciones iniciales $a_0 = 0$ y $a_1 = 1$.
+
+La ecuación característica asociada es:
+\[
+r^2 = r + 1 \quad \implies \quad r^2 - r - 1 = 0.
+\]
+Resolviendo esta ecuación cuadrática, las raíces son:
+\[
+r_1 = \frac{1 + \sqrt{5}}{2}, \quad r_2 = \frac{1 - \sqrt{5}}{2}.
+\]
+
+Por lo tanto, la solución general de la relación de recurrencia es:
+\[
+a_n = \alpha_1 \left( \frac{1 + \sqrt{5}}{2} \right)^n + \alpha_2 \left( \frac{1 - \sqrt{5}}{2} \right)^n,
+\]
+donde $\alpha_1$ y $\alpha_2$ son constantes que se determinan usando las condiciones iniciales.
+
+\subsection{Determinación de las constantes}
+Usando $a_0 = 0$ y $a_1 = 1$, tenemos el siguiente sistema de ecuaciones:
+\[
+a_0 = \alpha_1 + \alpha_2 = 0, \quad a_1 = \alpha_1 r_1 + \alpha_2 r_2 = 1.
+\]
+De la primera ecuación, $\alpha_2 = -\alpha_1$. Sustituyendo en la segunda ecuación:
+\[
+\alpha_1 r_1 - \alpha_1 r_2 = 1 \quad \implies \quad \alpha_1 (r_1 - r_2) = 1.
+\]
+Como $r_1 - r_2 = \sqrt{5}$, se obtiene:
+\[
+\alpha_1 = \frac{1}{\sqrt{5}}, \quad \alpha_2 = -\frac{1}{\sqrt{5}}.
+\]
+
+Finalmente, la solución explícita es:
+\[
+a_n = \frac{1}{\sqrt{5}} \left( \left( \frac{1 + \sqrt{5}}{2} \right)^n - \left( \frac{1 - \sqrt{5}}{2} \right)^n \right).
+\]
+
+\subsection{Verificación con los primero términos}
+Calculamos los primeros términos de la sucesión usando la fórmula:
+\[
+a_n = \frac{1}{\sqrt{5}} \left( \left( \frac{1 + \sqrt{5}}{2} \right)^n - \left( \frac{1 - \sqrt{5}}{2} \right)^n \right).
+\]
+Para $n = 0$:
+\[
+a_0 = \frac{1}{\sqrt{5}} \left( 1 - 1 \right) = 0.
+\]
+Para $n = 1$:
+\[
+a_1 = \frac{1}{\sqrt{5}} \left( \frac{1 + \sqrt{5}}{2} - \frac{1 - \sqrt{5}}{2} \right) = 1.
+\]
+Para $n = 2$:
+\[
+a_2 = \frac{1}{\sqrt{5}} \left( \left( \frac{1 + \sqrt{5}}{2} \right)^2 - \left( \frac{1 - \sqrt{5}}{2} \right)^2 \right) = 1.
+\]
+Para $n = 3$:
+\[
+a_3 = \frac{1}{\sqrt{5}} \left( \left( \frac{1 + \sqrt{5}}{2} \right)^3 - \left( \frac{1 - \sqrt{5}}{2} \right)^3 \right) = 2.
+\]
+Y así sucesivamente, obteniendo la sucesión de Fibonacci: $0, 1, 1, 2, 3, 5, 8, \dots$.
+
+\section{Teorema para la Solución de Relaciones de Recurrencia Lineales Homogéneas con Coeficientes Constantes (RRLHCC) con raíces características que pueden ser iguales}
+
+Sea una relación de recurrencia lineal homogénea con coeficientes constantes (RRLHCC) de orden $k$:
+\[
+a_n = C_1a_{n-1} + C_2a_{n-2} + \dots + C_ka_{n-k}, \quad \text{con } C_k \neq 0,
+\]
+y sea $r_1, r_2, \dots, r_k$ el conjunto de raíces (reales o complejas) de la ecuación característica asociada, con multiplicidades $m_1, m_2, \dots, m_s$, respectivamente. Entonces, la solución general para la recurrencia es de la forma:
+\[
+a_n = (\alpha_{0} + \alpha_{1}n + \dots + \alpha_{m_1-1}n^{m_1-1})r_1^n + (\beta_{0} + \beta_{1}n + \dots + \beta_{m_2-1}n^{m_2-1})r_2^n + \dots
++ (\gamma_{0} + \gamma_{1}n + \dots + \gamma_{m_s-1}n^{m_s-1})r_s^n,
+\]
+donde los coeficientes $\alpha_i$, $\beta_i$, $\gamma_i$, etc., se determinan a partir de las condiciones iniciales.
+
+\subsection{Ejemplo 1: relación de recurrencia con raíces múltiples}
+Consideremos la relación de recurrencia:
+\[
+a_n = 5a_{n-1} - a_{n-2} - 37a_{n-3} + 86a_{n-4} - 76a_{n-5} + 24a_{n-6}.
+\]
+
+La \textbf{ecuación característica} asociada es:
+\[
+r^6 - 5r^5 + r^4 - 37r^3 + 86r^2 - 76r + 24 = 0.
+\]
+Factorizando, obtenemos:
+\[
+r^6 - 5r^5 + r^4 - 37r^3 + 86r^2 - 76r + 24 = (r-2)^3(r-1)^2(r+1).
+\]
+
+Las \textbf{raíces} son:
+\[
+r_1 = 2 \quad (\text{multiplicidad } 3), \quad r_2 = 1 \quad (\text{multiplicidad } 2), \quad r_3 = -1 \quad (\text{multiplicidad } 1).
+\]
+
+La \textbf{solución general} de la relación de recurrencia es:
+\[
+a_n = (\alpha_0 + \alpha_1 n + \alpha_2 n^2) 2^n + (\beta_0 + \beta_1 n) 1^n + \gamma_0 (-1)^n,
+\]
+donde los coeficientes $\alpha_0, \alpha_1, \alpha_2, \beta_0, \beta_1, \gamma_0$ se determinan usando las condiciones iniciales.
+
+\newpage
+
+\subsection{Ejemplo 2: relación de recurrencia con raíz doble}
+Consideremos ahora una RRLHCC de orden $2$:
+\[
+a_n = 4a_{n-1} - 4a_{n-2},
+\]
+con condiciones iniciales $a_0 = 2$ y $a_1 = 8$.
+
+La \textbf{ecuación característica} asociada es:
+\[
+r^2 - 4r + 4 = 0,
+\]
+que se puede reescribir como:
+\[
+(r-2)^2 = 0.
+\]
+
+La única \textbf{raíz} es $r = 2$, con multiplicidad $2$.
+
+La \textbf{solución general} de la relación de recurrencia es:
+\[
+a_n = (\alpha + \beta n) 2^n.
+\]
+
+Usamos las condiciones iniciales para \textbf{determinar} $\alpha$ y $\beta$ (\textbf{constantes}):
+\[
+a_0 = \alpha \cdot 2^0 = \alpha = 2,
+\]
+\[
+a_1 = (\alpha + \beta \cdot 1) 2^1 = (2 + \beta) \cdot 2 = 8 \quad \implies \quad 2 + \beta = 4 \quad \implies \quad \beta = 2.
+\]
+
+Por lo tanto, la solución es:
+\[
+a_n = (2 + 2n) 2^n.
+\]
+
+\textbf{Calculamos los primeros términos de la sucesión usando la fórmula}:
+\[
+a_n = (2 + 2n) 2^n.
+\]
+Para $n = 0$:
+\[
+a_0 = (2 + 2 \cdot 0) \cdot 2^0 = 2.
+\]
+Para $n = 1$:
+\[
+a_1 = (2 + 2 \cdot 1) \cdot 2^1 = 8.
+\]
+Para $n = 2$:
+\[
+a_2 = (2 + 2 \cdot 2) \cdot 2^2 = 24.
+\]
+
+Por lo tanto, la sucesión es: $2, 8, 24, \dots$.
+
+\newpage
+
+\section{Teorema de solución para las RRLNHCC (Relaciones de Recurrencia Lineales No Homogéneas con Coeficientes Constantes)}
+
+\subsection{Teorema general}
+Sea una RRLNHCC de la forma:
+\[
+a_n = C_1a_{n-1} + C_2a_{n-2} + \dots + C_ka_{n-k} + L(n),
+\]
+donde $L(n)$ representa la parte no homogénea, $C_i$ son coeficientes constantes y $k$ es el orden de la recurrencia.
+
+La solución general de la RRLNHCC es la suma de dos partes:
+\[
+a_n = a_n^{(h)} + a_n^{(p)},
+\]
+donde:
+\begin{itemize}
+    \item $a_n^{(h)}$ es la solución de la parte homogénea asociada.
+    \item $a_n^{(p)}$ es una solución particular de la parte no homogénea $L(n)$.
+\end{itemize}
+
+\paragraph{Estrategia para resolver la recurrencia:}
+\begin{enumerate}
+    \item Resolver la \textbf{parte homogénea}: $a_n^{(h)}$.
+        \begin{itemize}
+            \item Determinar la \textbf{ecuación característica}.
+            \item Encontrar las raíces de la ecuación característica.
+            \item Construir la solución general de la parte homogénea según las raíces (simples o múltiples).
+        \end{itemize}
+    \item Determinar una \textbf{solución particular} $a_n^{(p)}$ de la parte no homogénea $L(n)$.
+    \item Combinar ambas partes: $a_n = a_n^{(h)} + a_n^{(p)}$.
+\end{enumerate}
+
+\newpage
+
+\subsection{Ejemplo resuelto}
+Considere la recurrencia no homogénea:
+\[
+a_n = 2a_{n-1} + 1, \quad a_1 = 1.
+\]
+
+\paragraph{Paso 1: Parte homogénea}
+La ecuación homogénea asociada es:
+\[
+a_n^{(h)} = 2a_{n-1}^{(h)}.
+\]
+La ecuación característica es:
+\[
+r - 2 = 0 \implies r = 2.
+\]
+Por lo tanto, la solución general de la parte homogénea es:
+\[
+a_n^{(h)} = \alpha \cdot 2^n,
+\]
+donde $\alpha$ es una constante a determinar.
+
+\paragraph{Paso 2: Solución particular de la parte no homogénea}
+La parte no homogénea es $L(n) = 1$. Probaremos con una solución particular constante de la forma:
+\[
+a_n^{(p)} = A.
+\]
+Sustituyendo en la recurrencia:
+\[
+A = 2A + 1.
+\]
+Resolviendo para $A$:
+\[
+A = -1.
+\]
+Por lo tanto, una solución particular es:
+\[
+a_n^{(p)} = -1.
+\]
+
+\paragraph{Paso 3: Solución general}
+La solución general de la recurrencia es la suma de la solución homogénea y la solución particular:
+\[
+a_n = a_n^{(h)} + a_n^{(p)} = \alpha \cdot 2^n - 1.
+\]
+
+\paragraph{Paso 4: Determinar la constante $\alpha$}
+Usando la condición inicial $a_1 = 1$:
+\[
+a_1 = \alpha \cdot 2^1 - 1 = 1.
+\]
+Resolviendo para $\alpha$:
+\[
+2\alpha - 1 = 1 \implies 2\alpha = 2 \implies \alpha = 1.
+\]
+
+\paragraph{Solución final:}
+La solución de la recurrencia es:
+\[
+a_n = 2^n - 1.
+\]
+
+\paragraph{Verificación:}
+Calculamos algunos términos para verificar la solución:
+\begin{itemize}
+    \item $a_1 = 2^1 - 1 = 1$ (condición inicial).
+    \item $a_2 = 2^2 - 1 = 3$.
+    \item $a_3 = 2^3 - 1 = 7$.
+    \item $a_4 = 2^4 - 1 = 15$.
+\end{itemize}
+
+Por lo tanto, la solución coincide con la recurrencia dada.
+
+\begin{center}
+    \textbf{Solución final:} $a_n = 2^n - 1$.
+\end{center}
+
+\newpage
+
+\section{Soluciones particulares de RRLNHCC (Relaciones de Recurrencia Lineales No Homogéneas con Coeficientes Constantes)}
+
+Dada una relación de recurrencia no homogénea con coeficientes constantes (RRLNHCC) de la forma:
+\[
+a_n = C_1a_{n-1} + C_2a_{n-2} + \dots + C_k a_{n-k} + L(n),
+\]
+donde la parte no homogénea $L(n)$ es de la forma:
+\[
+L(n) = (p_0 + p_1n + \dots + p_t n^t)s^n,
+\]
+con $p_i$ y $s$ constantes.
+
+\subsection{Teorema: Soluciones particulares de RRLNHCC}
+La solución particular $a_n^{(p)}$ depende de si $s$ es raíz o no de la ecuación característica asociada a la parte homogénea.
+
+\begin{enumerate}
+    \item \textbf{Caso 1: $s$ no es raíz de la ecuación característica.} En este caso, la solución particular se toma de la forma:
+    \[
+    a_n^{(p)} = (\beta_0 + \beta_1n + \dots + \beta_t n^t)s^n,
+    \]
+    donde $\beta_i$ son constantes a determinar.
+
+    \item \textbf{Caso 2: $s$ es raíz de la ecuación característica con multiplicidad $m$.} En este caso, la solución particular se modifica multiplicando por $n^m$:
+    \[
+    a_n^{(p)} = (\beta_0 + \beta_1n + \dots + \beta_t n^t)s^n n^m.
+    \]
+\end{enumerate}
+
+\subsection{Ejemplo resuelto}
+Consideremos la relación de recurrencia:
+\[
+a_n = a_{n-1} + n,
+\]
+con condición inicial $a_1 = 1$.
+
+\paragraph{Paso 1: Parte homogénea}
+La parte homogénea de la recurrencia es:
+\[
+a_n^{(h)} = a_{n-1}^{(h)}.
+\]
+La ecuación característica es:
+\[
+r - 1 = 0 \implies r = 1.
+\]
+Como la raíz $r = 1$ es única, la solución de la parte homogénea es de la forma:
+\[
+a_n^{(h)} = \alpha \cdot 1^n = \alpha.
+\]
+
+\paragraph{Paso 2: Parte no homogénea}
+La parte no homogénea $L(n)$ es:
+\[
+L(n) = n.
+\]
+Observamos que $s = 1$ y que $s = 1$ \textbf{es raíz de la ecuación característica} con multiplicidad $1$. Por lo tanto, la solución particular debe ser de la forma:
+\[
+a_n^{(p)} = (\beta_0 + \beta_1n) \cdot 1^n \cdot n^1.
+\]
+Simplificando:
+\[
+a_n^{(p)} = \beta_0 n + \beta_1 n^2.
+\]
+
+\paragraph{Paso 3: Determinar las constantes $\beta_0$ y $\beta_1$}
+Sustituimos $a_n^{(p)} = \beta_0 n + \beta_1 n^2$ en la recurrencia original $a_n = a_{n-1} + n$:
+\[
+\beta_0 n + \beta_1 n^2 = \beta_0 (n-1) + \beta_1 (n-1)^2 + n.
+\]
+Desarrollamos el lado derecho:
+\[
+\beta_0 (n-1) + \beta_1 (n-1)^2 + n = \beta_0 n - \beta_0 + \beta_1 (n^2 - 2n + 1) + n.
+\]
+Simplificamos los términos:
+\[
+\beta_0 n + \beta_1 n^2 = \beta_1 n^2 + (\beta_0 - 2\beta_1 + 1)n + (-\beta_0 + \beta_1).
+\]
+Igualando coeficientes del mismo grado en $n$:
+\begin{itemize}
+    \item Coeficiente de $n^2$: $\beta_1 = \beta_1 \implies$ (se cumple).
+    \item Coeficiente de $n$: $\beta_0 - 2\beta_1 + 1 = \beta_0$.
+    \item Término constante: $-\beta_0 + \beta_1 = 0$.
+\end{itemize}
+
+Resolvemos el sistema de ecuaciones:
+\[
+-\beta_0 + \beta_1 = 0 \implies \beta_1 = \beta_0.
+\]
+\[
+\beta_0 - 2\beta_1 + 1 = \beta_0 \implies -2\beta_1 + 1 = 0 \implies \beta_1 = \frac{1}{2}.
+\]
+Por lo tanto, $\beta_0 = \frac{1}{2}$ y $\beta_1 = \frac{1}{2}$. La solución particular es:
+\[
+a_n^{(p)} = \frac{1}{2}n + \frac{1}{2}n^2.
+\]
+
+\paragraph{Paso 4: Solución general}
+La solución general de la recurrencia es la suma de la parte homogénea y la parte no homogénea:
+\[
+a_n = a_n^{(h)} + a_n^{(p)} = \alpha + \left( \frac{1}{2}n + \frac{1}{2}n^2 \right).
+\]
+
+\paragraph{Paso 5: Determinar la constante $\alpha$}
+Usando la condición inicial $a_1 = 1$:
+\[
+a_1 = \alpha + \frac{1}{2}(1) + \frac{1}{2}(1)^2 = 1.
+\]
+Simplificando:
+\[
+\alpha + \frac{1}{2} + \frac{1}{2} = 1 \implies \alpha = 0.
+\]
+
+\paragraph{Solución final:}
+La solución de la recurrencia es:
+\[
+a_n = \frac{1}{2}n + \frac{1}{2}n^2.
+\]
+
+\paragraph{Verificación:}
+Calculamos algunos términos:
+\begin{itemize}
+    \item $a_1 = \frac{1}{2}(1) + \frac{1}{2}(1)^2 = 1$ (condición inicial).
+    \item $a_2 = \frac{1}{2}(2) + \frac{1}{2}(2)^2 = 1 + 2 = 3$.
+    \item $a_3 = \frac{1}{2}(3) + \frac{1}{2}(3)^2 = 1.5 + 4.5 = 6$.
+\end{itemize}
+
+Por lo tanto, la solución coincide con la recurrencia dada.
+
+\begin{center}
+    \textbf{Solución final:} $a_n = \frac{1}{2}n + \frac{1}{2}n^2$.
+\end{center}
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
