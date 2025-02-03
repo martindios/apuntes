@@ -1,0 +1,139 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{POO Tema 5. Polimorfismo}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Polimorfismo en herencia}
+Mecanismo mediante el cual un objeto \textbf{se puede comportar de múltiples formas} en cada momento, en función del contexto en el que aparece dicho objeto. 
+Un objeto se puede comportar como:
+\begin{itemize}
+    \item una \textbf{instancia de la clase a la que pertenece}, es decir, de la clase cuyo constructor se invoca a través de new.
+    \item una \textbf{instancia de alguna de las clases que se encuentran en un nivel superior de la jerarquía} en relación a la clase a la cual pertenece realmente el objeto.
+\end{itemize}
+
+\subsection{Ejemplo}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Captura_24_11_25_195014.png}
+    \caption{Ejemplo de polimorfismo}
+\end{figure}
+
+En la línea 1 se crea infEuropa, un objeto de la clase InfanteriaEuropa. \\
+En la línea 2 se fuerza a que infEuropa se comporte como un objeto de la clase Infantería, que \textbf{es la clase base} de InfanteriaEuropa. \\
+En la línea 3 se fuerza a que infEuropa se comporte como un objeto de la clase CartaDeEquipamiento, \textbf{aún cuando esa clase es de tipo abstracta}. (Ya que la restricción que impone el que sea abstracta es que no se pueden crear objetos de dicha clase, no se puede usar new)
+
+\section{Upcasting y Downcasting}
+Cuando se indica que un objeto se comporta como una clase de la jerarquía diferente a la que pertenece, se está forzando un cambio en el tipo de dato del objeto. 
+
+
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Captura_24_11_25_195553.png}
+    \caption{Upcasting y downcasting}
+\end{wrapfigure}
+
+En \textbf{upcasting} un objeto de una clase derivada se comporta como una de las clases base de la jerarquía. \\
+En \textbf{downcasting} un objeto de una clase base se comporta como una de las clases derivadas de la jerarquía.
+
+\newpage
+
+Este cambio de tipo de dato \textbf{no implica una nueva reserva de memoria para el objeto}, sino que \textbf{el objeto seguirá siendo el mismo}, independientemente de los cambios de tipo de dato
+que tengan lugar a lo largo del programa. \\
+
+El casting de objetos no solamente conlleva un cambio en el tipo de dato, sino que también \textbf{afecta} a la \textbf{accesibilidad de los atributos} y de los \textbf{métodos} que se pueden invocar desde el objeto. (Los únicos métodos que serán accesibles por el objeto son (1) los
+que están \textbf{definidos en la clase a la cual se ha realizado el cast}; y (2)
+\textbf{los que hereda dicha clase de las clases base de la jerarquía})
+
+\subsection{Upcasting}
+Mecanismo más habitual, facilita el polimorfismo, ya que parece natural pensar que un objeto de la clase derivada se \textbf{comporta como} uno de sus clase base. (Cuando se realiza upcasting no hace falta indicar el cast de forma explícita). \\
+
+Los métodos y atributos que son propios de la clase a la que pertenece el objeto \textbf{no son accesibles}, es decir, se pierde la visibilidad de esos métodos y atributos, ya que el objeto \textbf{deja de comportarse} como esa clase. \\
+
+Si un método está sobrescrito cuando se realiza upcasting el objeto usará la implmentación del método correspondiente \textbf{a la clase que pertenece el objeto}, de modo que aunque se comporta como otra clase, no utiliza las implementaciones de los métodos de esa clase. (Al ser así puede haber poliformismo cuando se trabaja con clases abstractas) \\
+
+El upcasting \textbf{nunca} producirá un error, ya que con la \textbf{herencia se garantiza} que las clases derivadas tienen los mismos métodos que la clase base. Cuando se ha realizado el upcasting \textbf{no hay ningún modo} de acceder a los métodos específicos de la clase a la cual pertenece dicho objeto.
+
+Ejemplo:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Captura_24_11_25_202352.png}
+        \caption{Ejemplo de upcasting}
+\end{figure}
+
+\newpage
+
+\subsection{Downcasting}
+Downcasting \textbf{fuerza} el comportamiento de los objetos en las jerarquías de clases, ya que por lo general \textbf{no se puede asegurar} que un objeto de una clase base se comporte como una derivada. (downcastig no es una operación segura (\textbf{unsafe}), sino que es una operación en la cual se puede generar un error o una excepción en tiempo de ejecución) \\
+
+Normalmente se hace downcasting cuando \textbf{se necesita deshacer} el resultado del upcasting, es decir, cuando se quiere recuperar la asignación del objeto a la clase a la cual pertenece. El compilador \textbf{no comprueba} en tiempo de diseño si el cast tendrá lugar de forma correcta, ni tan siquiera comprueba que el objeto se encuentre en la misma jerarquía que la clase derivada a la que se “convierte” 
+(Es necesario indicar de forma explícita a qué clase se "convertirá" el objeto de la clase base [Infanteria inf = (Infanteria) carta;]) \\
+
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{Captura_24_11_25_203503.png}
+    \caption{Ejemplo de uso de instanceof}
+\end{wrapfigure}
+
+El principal problema de la operación de downcasting es que \textbf{no se puede garantizar} que el objeto disponga de los mismos métodos y atributos que los de la clase derivada a la cual se
+realiza el casting. Se debe comprobar en tiempo de ejecución que el tipo de dato del objeto sea la propia clase derivada a la que se realiza el casting (operador instanceof) \\
+
+El operador \textbf{instanceof} determina en tiempo de ejecución si el tipo de dato de un objeto es una clase dada, de manera que si devuelve true se podrán invocar los métodos de dicha clase. \\
+
+Ejemplo:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Captura_24_11_25_203701.png}
+    \caption{Ejemplo de downcasting}
+\end{figure}
+
+\newpage
+
+\section{Beneficios del polimorfismo}
+\begin{itemize}
+    \item Facilita la \textbf{simplificación del código del programa}, puesto que los objetos se pueden manejar como objetos de las clases base, de modo que la invocación de los métodos comunes a todas las clases se realiza desde una misma clase (la clase base).
+    \item Facilita la \textbf{extensibilidad de los programas}, ya que la inclusión de nuevas clases en la jerarquía que implementan los métodos comunes de las clases base no supondrá modificaciones en el código del programa.
+\end{itemize}
+
+Buenas prácticas:
+En los conjuntos de datos, como ArrayList o HashMap, \textbf{se deben usar las clases derivadas}
+para almacenar los objetos de las clases de la jerarquía. \\
+En la medida de lo posible se debe \textbf{favorecer al uso del polimorfismo}, para la simplificación de código y mejora de diseño.
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.45\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{8.png}
+    \caption{Características de los datos}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
