@@ -1,0 +1,226 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{POO Tema 4. Herencia. Jerarquías de clases, composición y abstracción}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+\section{Herencia}
+Es la segunda de las características principales de la Programación Orientada a Objetos. Es el mecanismo en virtud del cual \textbf{una clase derivada reutiliza los atributos y los métodos que pertenecen a una clase base} (o superior). \\
+Los \textbf{constructores de una clase no serán heredados por las clases derivadas}, ya que se consideran que son específicos de la clase a la que pertenecen. \\
+Entre una clase derivada (p.e., CartaDeMision) y una clase base (p.e., Carta) se dice que existe una \textbf{relación del tipo “es-un/a”} (p.e., una CartaDeMision es una Carta) \\
+
+\textbf{Tipos de herencia}:
+
+\begin{wrapfigure}[]{}{0.4\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{Captura de pantalla_20241124_123903.png}
+    \caption{Tipos de herencia}
+\end{wrapfigure}
+
+1. Una clase B hereda todos los atributos y métodos de una clase A. Es el tipo de herencia más básico, en la que están basados los demás tipos de herencia. \\
+
+2. Una clase C hereda los atributos y métodos de una clase B que, a su vez, hereda de una clase A, de modo que la clase C hereda los métodos y atributos de la clase A. \\
+
+3. Las clases B y C heredan los atributos y los métodos de la clase A, de modo que ambas clases se diferencian en los atributos y métodos específicos de cada una de ellas. \\
+
+4. La clase C hereda los métodos y atributos de las clases A y B, de modo que es necesario definir políticas de herencia cuando A y B tienen métodos comunes. \\
+
+\newpage
+
+\subsection{Características de la herencia}
+
+Ventajas de la herencia: 
+\begin{itemize}
+    \item Reutilización de código
+    \item Simplifica el código
+    \item Facilita el mantenimiento (si se hace correctamente)
+    \item Facilita la extensibilidad de los programas (si se hace correctamente)
+\end{itemize}
+
+Desventajas de la herencia: 
+\begin{itemize}
+    \item Si el nivel de jerarquización es muy profundo el \textbf{código es más difícil de entender}.
+    \item Si hay cambios en la clase base estos podrían ser \textbf{inconsistentes} en las clases derivadas.
+    \item Es posible que los atributos deban tener un modificador de acceso diferente al privado que, por tanto, sería \textbf{contrario al concepto de encapsulación}.
+\end{itemize}
+
+\section{Composición}
+Mecanismo mediante el cual una clase contiene objetos de otras clases a los que delega ciertas operaciones para conseguir una funcionalidad dada. \\
+Se dice que la composición entre dos clases es una \textbf{relación de tipo “tiene-un/a”}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.77\textwidth]{Captura de pantalla_20241124_125757.png}
+    \caption{Ejemplo de composición}
+\end{figure}
+
+\subsection{Características de la composición}
+
+Ventajas de la composición: 
+\begin{itemize}
+    \item Reparte responsabilidades entre objetos
+    \item Facilita el mantenimiento del programa
+    \item Facilita la extensibilidad
+    \item Las clases están desacopladas entre sí, de modo que un cambio en una de ellas tiene un impacto reducido en las otras
+\end{itemize}
+
+Desventajas de la composición:
+\begin{itemize}
+    \item Tiende a \textbf{generar mucho más código y de mayor complejidad}, para soportar la misma funcionalidad que se consigue cuando se aplica herencia.
+    \item Más tiempo de desarrollo en comparación con la herencia, ya que al no estar basadas unas clases en otras hay que \textbf{implementar los métodos en todas las clases}.
+\end{itemize}
+
+\newpage
+
+\section{Herencia vs Composición}
+
+\subsection{Ejemplo}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Captura de pantalla_20241124_130724.png}
+    \caption{Ejemplo sobre la elección de herencia o de composición}
+\end{figure}
+
+La herencia en programación implica que un empleado es una persona, lo que puede ser problemático, ya que si un empleado deja de serlo, también dejaría de ser persona. En cambio, es más adecuado considerar que un empleado tiene atributos de una persona, lo que permite que la clase Empleado delegue las operaciones relacionadas con personas a la clase Persona, manteniendo así una separación clara entre las funcionalidades de ambas clases.
+
+\subsection{Composición sobre herencia}
+
+Cuando no se debería de utilizar herencia:
+\begin{itemize}
+    \item Si las clases no están relacionadas desde un punto de vista lógico.
+    \item Si una clase base tiene una sola clase derivada.
+    \item Si las clases derivadas heredan código que no necesitan.
+    \item Si existe la posibilidad de que las clases base cambien (en este caso la herencia complicaría el desarrollo del programa)
+    \item Si es necesario sobrescribir muchos métodos de las clases base (en este caso la herencia complicaría el desarrollo del programa)
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Captura_24-11-24_133740.png}
+    \caption{Composición sobre herencia}
+\end{figure}
+
+\newpage
+
+\section{Herencia en Java}
+En Java no existe la herencia múltiple, es decir, una clase derivada solo puede tener una única clase base. Solamente se heredan los atributos y métodos de la clase base que son públicos para la clase derivada, depende de los tipos de acceso. \\
+
+\subsection{Tipos de acceso para la herencia}
+\begin{itemize}
+    \item private: la clase derivada \textbf{nunca heredará} los atributos y los métodos, independientemente del paquete en el que esté la clase base en relación a la clase derivada.
+    \item public: la clase derivada \textbf{siempre heredará} los atributos y los métodos, independientemente del paquete en el que esté la clase base en relación a la clase derivada.
+    \item default(no poner nada): la clase derivada \textbf{solamente heredará} los atributos y los métodos de la clase base si ambas clases \textbf{se encuentran en el mismo paquete}.
+    \item protected: la clase derivada \textbf{siempre heredará} los atributos y los métodos, independientemente del paquete en el que esté la clase base en relación a la clase derivada.
+\end{itemize}
+
+\textbf{Los atributos deben ser privados}, ya que se considera que la encapsulación es una característica que ofrece mayores beneficios que la herencia. \\
+
+La \textbf{clase derivada hereda todos los atributos}, independientemente de su tipo de acceso. El tipo de acceso especifica el nivel de visibilidad/accesibilidad que los métodos de la clase derivada tienen sobre los atributos y métodos de la clase base, es decir, \textbf{si son privados, se heredan pero no se puede acceder a ellos}. \\
+
+La \textbf{clase derivada hereda todos los métodos}, independientemente de su tipo de acceso. El tipo de acceso no evita o limita la herencia de los métodos, sino que \textbf{impone restricciones sobre la visibilidad que tienen los métodos de la derivada sobre los métodos que se heredan de la
+clase base}. \\
+
+En una jerarquía de clases, idealmente los \textbf{métodos} deberían de estar \textbf{implementados} \textbf{en la clase a la que pertenecen los atributos que se utilizan en su implementación}, evitando hacerlo en las clases derivadas de dicha clase.
+
+\newpage
+
+\section{Constructores}
+Los \textbf{constructores de la clase base no se heredan}. Los constructores tienen que reservar memoria e inicializar los atributos de la clase a la que pertenecen, pero el constructor de la clase base no tiene acceso a los atributos de la clase derivada, con lo cual si se hereda el constructor de la clase base, no podría ser invocado para crear objetos de la clase derivada.
+
+\begin{itemize}
+    \item Si el \textbf{constructor} de la \textbf{clase base no tiene argumentos}:
+        \begin{itemize}
+            \item Cuando se invoca al constructor de la clase derivada, se invocará automáticamente el constructor de la clase base.
+            \item Si se implementa un constructor sin args para la clase derivada, la clase base deberá tener obligatoriamente un constructor sin args.
+        \end{itemize}
+
+    \item Si el \textbf{constructor} de la \textbf{clase base tiene argumentos}:
+        \begin{itemize}
+            \item Solamente se invocará a dicho constructor, puesto que no se puede garantizar que en la clase base exista un constructor con los mismos args.
+             \item Se invoca manualmente al constructor de la clase base con args que se considere oportuno en cada caso. Se hace uso de super
+        \end{itemize}
+\end{itemize}
+
+\textbf{super} permite acceder desde la clase derivada a los atributos, métodos y constructores de la clase base sobre los que existe cierto nivel de visibilidad. Únicamente puede acceder a los elementos de la clase base que es \textbf{inmediatamente superior} a la clase derivada. \\
+
+\\
+
+Buenas prácticas:
+\begin{itemize}
+    \item Se deben reservar e inicializar los atributos en los constructores de las clases a las que pertenecen dichos atributos, evitando hacerlo en las clases derivadas de dicha clase.
+    
+    \item Se debe hacer uso de super para invocar a los constructores de las clases base para reservar memoria en inicializar los atributos (privados) que estén definidos en ellas.
+\end{itemize}
+
+\section{Métodos y sobreescritura}
+Un método heredado de una clase base se implementa nuevamente en la clase derivada. La firma del método debe ser la misma, y el tipo de acceso el mismo o superior. \\
+
+Una forma de sobrescribir los métodos en las clases derivadas es hacer uso de super para reutilizar la implementación del método que está en la clase base.
+\begin{itemize}
+    \item Desde el método de la clase derivada super invoca al mismo método de la clase base, es decir, al método que se sobrescribe y que tiene el mismo nombre y argumentos.
+    
+    \item Se usa super porque la clase base no es capaz de distinguir entre la implementación de la clase base y la implementación de la clase derivada, con lo cual la única forma de reutilizarlo es a través de super. (El método de la clase base se hereda, pero al sobreescribirse no se puede acceder a su implementación de la clase base)
+\end{itemize}
+
+\newpage
+
+\section{Clases abstractas}
+Son clases que \textbf{no se pueden instanciar}. \textbf{Pueden tener constructores}, pero no se pueden invocar a través de new, de modo que únicamente se pueden invocar mediante super cuando son las clases base de otras clases. Pueden tener atributos y métodos. Se suelen usar como \textbf{clases base de otras clases} de las que sí se pueden crear objetos, \textbf{facilitando reutilización}. \\
+
+Las clases abstractas deben tener implementadas la \textbf{mayor cantidad posible de métodos para que las clases derivadas puedan heredarlos} y así favorecer la reutilización de código. Una clase debería ser abstracta cuando todos los objetos pertenecen a cualquiera de las otras clases de la jerarquía, no
+siendo necesario crear un objeto de la clase abstracta. \\
+
+Las clases abstractas pueden tener métodos abstractos, no tienen cuerpo, es decir, son métodos que no están implementados y en los que solamente se especifica su firma (nombre, lo que devuelve y los argumentos de entrada). Si una clase tiene al menos un método abstracto entonces debe ser
+\textbf{necesariamente} una clase abstracta. Los métodos abstractos deben ser implementados en las clases derivadas de la clase abstracta a la que pertenecen, \textbf{siempre que dichas clases no sean abstractas}.
+
+\section{Clases, atributos y métodos finales}
+Si una clase es final significa que \textbf{no se pueden crear clases derivadas a partir de esta clase}. Solamente debería ser final cuando se garantiza que no será necesario crear clases derivadas de ella. \\
+
+Si un \textbf{método} es marcado como final, si este método pertenece a una clase base significa que no podrá ser sobrescrito en una clase derivada. \\
+
+Si un \textbf{atributo} es marcado como final, una vez que el atributo haya tomado un valor no podrá ser modificado. (no pueden tener setter). Se usan para implementar \textbf{constantes} (se suelen hacer final static, para que se pueda usar sin que sea necesario crear un objeto de la clase). \\
+
+Buenas prácticas:
+\begin{itemize}
+    \item Las \textbf{constantes} del programa se deberían definir en \textbf{una o varias clases abstractas} que son accesibles por todas las clases en las que se hace uso de esas constantes.
+    \item Las \textbf{clases y métodos finales} se deberían usar cuando se \textbf{garantice} que \textbf{no será necesarios crear clases derivadas o sobrescribir métodos}, respectivamente
+\end{itemize}
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Captura de pantalla_20241103_122101.png}
+    \caption{Características de los datos}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.45\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{Captura de pantalla_20241110_154938.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
