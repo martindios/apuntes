@@ -1,0 +1,171 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{POO Tema 1. Encapsulación: tipos de datos, clases y objetos}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+Consejos generales:
+\begin{enumerate}
+    \item El método main suele tener muy pocas líneas de código.
+    \item La clase principal no debe tener ningún atributo.
+\end{enumerate}
+
+\section{Encapsulación}
+Asegura la \textbf{integridad de los datos}, limitando los trozos de código del programa que pueden acceder a unos datos dados. \\
+Idealmente no existe ningún fragmento de código que pueda acceder a todos los datos del programa. \\
+Se usa el \textbf{principio de ocultación}, en virtud del cual solo un fragmento de código puede “ver” un conjunto de datos dado.
+
+\section{Clases}
+Los tipos de datos son las entidades que se quieren representar en el programa, estas \textbf{entidades} se conceptualizan como \textbf{clases}. Todos los tipos de datos son clases, y los \textbf{valores concretos} de esas clases se denominan \textbf{objetos}. \\
+En Java existen 2 especiaes de tipos de datos:
+\begin{enumerate}
+    \item Tipos de \textbf{datos primitivos} (int, float, char, ...)
+    \item \textbf{Clases}: están vinculados a las entidades de alto nivel del programa.
+\end{enumerate}
+
+\subsection{Encapsulación en las clases}
+Las clases contienen 2 tipos de código:
+\begin{enumerate}
+    \item \textbf{Variables o atributos}: características que definen la entidad representada por la clase.
+    \item \textbf{Funciones o métodos}: acceden a los atributos para permitir la lectura y escritura, y para implementar funcionalidades.
+\end{enumerate}
+Para solventar el problema de la integridad de datos las únicas funciones que pueden acceder a los atributos son las funciones de la clase. \\
+
+\newpage
+
+\subsection{Tipos de acceso} 
+Se pueden aplicar a \textbf{atributos y a métodos}.
+\begin{enumerate}
+    \item Público.
+    \begin{itemize}
+        \item \textbf{Métodos públicos}: pueden ser invocados desde cualquier método de cualquier clase del programa.
+        \item \textbf{Atributos públicos}: puede ser leídos o escritos desde cualquier método de cualquier clase del programa.
+    \end{itemize}
+
+    \item Privado
+    \begin{itemize}
+        \item \textbf{Métodos privados}: solamente pueden ser invocados desde métodos de la clase a la que pertenecen.
+        \item \textbf{Atributos privados}: solamente se pueden leer o escribir desde métodos de la clase a la que pertenecen.
+    \end{itemize}
+
+    \item Acceso a paquete.
+    \begin{itemize}
+        \item \textbf{Métodos de acceso a paquete}: solamente pueden invocarlos los métodos de las clases que pertenecen al mismo paquete de la clase en la que se encuentra el método, se comportan como privados para cualquier otro método.
+
+        \item \textbf{Atributos de acceso a paquete}: solamente se pueden leer o escribir desde los métodos de las clases que pertenecen al mismo paquete de la clase en la que se encuentra el atributo, se comportan como privados para cualquier otro método. 
+    \end{itemize}
+
+    \item Protegido.
+    \begin{itemize}
+        \item \textbf{Métodos protegidos}: pueden ser invocados por los métodos de las clases que pertenecen al mismo paquete de la clase y por los métodos de las subclases de la clase.
+
+        \item \textbf{Atributos protegidos}: pueden ser leídos o escritos por los métodos de las  clases que pertenecen al mismo paquete de la clase del atributo y por los métodos de las subclases de la clase en la que se encuentra el atributo. 
+    \end{itemize}
+\end{enumerate}
+
+Generalmente los \textbf{atributos} deben ser \textbf{privados} y los \textbf{métodos públicos}. Se pueden \textbf{usar métodos privados} para facilitar la codificación de los métodos. 
+
+\subsection{Getters y setters}
+\begin{itemize}
+    \item \textbf{Getters}: métodos que devuelven el valor que tienen los atributos en cada momento.
+    \item \textbf{Setters}: métodos que escriben el valor de los atributos.
+\end{itemize}
+Cada \textbf{atributo} de la clase tiene \textbf{un único} getter/setter. \\
+Buenas praxis:
+\begin{enumerate}
+    \item Los \textbf{setters} deben incluir una \textbf{condición} para evitar la escritura de null como valor de los atributos.
+    \item Generalmente \textbf{todos los atributos} tienen que tener \textbf{getter y setter}, salvo que solamente tengan interés o sean usados como parte de la programación de los métodos de la clase.
+\end{enumerate}
+
+\newpage
+
+\subsection{Constructores}
+Si el \textbf{atributo} es un \textbf{dato de tipo primitivo} se realiza \textbf{reserva de memoria} y se le asigna un valor inicial (dependiendo del tipo). \\
+Si el \textbf{atributo no es un dato primitivo} no se le reserva automáticamente memoria, se le asigna un \textbf{valor inicial null}, que en la práctica se trata como una variable que no existe. La \textbf{reserva de memoria} se hace invocando a los \textbf{constructores} a través del \textbf{operador new}. \\
+
+Un constructor es un método que se invoca para:
+\begin{enumerate}
+    \item \textbf{Reservar memoria} para un objeto de la clase.
+    \item Reservar memoria para los atributos de dicho objeto.
+    \item Asignar \textbf{valores iniciales} a los atributos del objeto.
+\end{enumerate}
+
+Un constructor se invoca un única vez para cada objeto. \\
+
+\textbf{Constructor por defecto}: proporcionado por Java automáticamente.
+\begin{itemize}
+    \item No tiene argumentos.
+    \item Inicializa los atributos a sus valores por defecto.
+    \item Tiene el mismo efecto que especificar un constructor sin argumentos con cuerpo vacío.
+\end{itemize}
+
+Buenas praxis:
+\begin{enumerate}
+    \item \textbf{No} está bien no definir constructores y \textbf{usar el constructor por defecto de Java}.
+    \item Se deben proporcionar constructores que tienen como \textbf{argumentos} los \textbf{valores de los atributos que es obligatorio inicializar} para crear un objeto.
+\end{enumerate}
+
+\subsection{Métodos funcionales}
+\textbf{Acceden directamente a los valores de los atributos}. \\
+Se crean cuando los \textbf{datos necesarios} para realizar las operaciones \textbf{son} los \textbf{valores de los atributos de dicha clase}. Los métodos se invocan desde los objetos de las clases con el \textbf{operador “.”}. \\
+Pueden tener varias implementaciones, se dice entonces que el \textbf{método} está \textbf{sobrecargado}. La firma del método debe ser diferente.
+
+\subsection{Método toString}
+Devuelve la \textbf{representación en texto de un objeto}, este método lo tienen todas las clases de Java, ya que lo heredan de la clase Object. La implementación por defecto no aporta información, es \textbf{necesario reimplementar el método}. \\
+
+Buenas praxis:
+\begin{enumerate}
+    \item Todas las clases que necesiten \textbf{mostrar características por consola} deberían \textbf{reimplementar toString}.
+    \item No es necesario incluir todos los valores de todos los \textbf{atributos}, sirve con los que se \textbf{consideren relevantes}.
+\end{enumerate}
+
+\newpage
+
+\section{Registros (Records)}
+Clase cuyas \textbf{instancias} son \textbf{inmutables}, es decir, \textbf{no pueden cambiar los valores de los atributos en tiempo de ejecución}. 
+\begin{enumerate}
+    \item Todos sus \textbf{atributos} son \textbf{privados}.
+    \item Todo atributo tiene su \textbf{getter correspondiente}.
+    \item Los atributos \textbf{no tienen setters}, ni ningún otro método que pueda modificar los valores de los atributos.
+    \item Tienen un constructor, denominado \textbf{constructor canónico}, con sus correspondientes argumentos para cada uno de los atributos.
+    \item El toString incluye el nombre de la clase y el nombre de los atributos con sus valores.
+\end{enumerate}
+
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.5\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
