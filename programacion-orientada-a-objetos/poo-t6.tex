@@ -1,0 +1,134 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[spanish]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{comment}
+\usepackage{wrapfig}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{POO Tema 6. Interfaces}
+\author{Martín González Dios 
+\href{https://github.com/martindios}{\includegraphics[height=0.5cm]{github.png}}}
+
+\begin{document}
+\maketitle
+
+Los interfaces son uno de los componentes clave en el diseño de los programas, ya que con ellos se establecen de forma muy precisa los requisitos que deben cumplir las clases del programa.
+\begin{itemize}
+    \item \textbf{Se definen los tipos de datos} que se deben crear en el programa, de modo que pueden existir otros tipos de datos, pero al menos deben estar definidos los indicados en las interfaces.
+    \item \textbf{Se definen exactamente los métodos} que deben tener las clases del programa, indicando exactamente sus firmas.
+    \item Cada clase puede tener más métodos públicos y privados, pero los \textbf{métodos de interés} son los indicados en los interfaces.
+\end{itemize}
+
+El objetivo de un interfaz es establecer los métodos que una clase debe implementar y que serán los \textbf{métodos visibles y accesibles} por las otras clases del programa. \\
+ 
+El uso de interfaces facilita enormemente \textbf{el desarrollo y el mantenimiento de los programas}, puesto que con ellos se dividen las responsabilidades entre los programadores y permiten una implementación independiente de las clases.
+\begin{itemize}
+    \item Un cambio en una clase en la que se implementan los métodos indicados en un interfaz \textbf{no afectará a las otras clases} que hace uso de dicho interfaz.
+    \item Un cambio en el interfaz afectará de forma significativa tanto a las clases que implementan el interfaz como a las clases que lo usan. (las interfaces no se deberían modificar).
+\end{itemize}
+
+\newpage
+
+\section{Interfaz en Java}
+\begin{itemize}
+    \item No se puede crear objetos de interfaces, con lo cual \textbf{no tienen constructores}.
+    \item public class $<nombre\_clase>$ implements $<nombre\_interfaz>$
+    \item Una vez la interfaz haya sido implementada, \textbf{se comportará como una clase}, pudiendo invocar a los métodos abstractos, con la implementación de clase, los métodos estáticos y por defecto.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{Captura_24_11_26_131508.png}
+    \caption{Ejemplo sobre interfaces en Java}
+\end{figure}
+
+Si una clase implementa una interfaz, entonces esa clase tendrá los mismos métodos que la interfaz, \textbf{del mismo modo} que una clase derivada tiene los mismos métodos que una clase base. La clase que implementa la interfaz se puede entender que \textbf{es como una clase derivada de la interfaz}, puesto que una interfaz es equivalente a una clase abstracta con las siguientes características: métodos abstractos, atributos constantes y constructores no implementados. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Captura_24_11_26_132133.png}
+    \caption{Comparación entre clases abstractas e interfaces}
+\end{figure}
+
+\newpage
+
+\section{Métodos por defecto}
+El principal problema de las interfaces es la incapacidad de las clases que los implementan para \textbf{adaptarse a cambios}. Una solución parcial son los métodos por defecto. \\
+
+Son métodos que se \textbf{deben declarar en implementar en la interfaz}, de modo que se \textbf{heredarán} por las clases que implementan dicha interfaz. \\
+
+La implementación debe operar únicamente con los \textbf{argumentos del método por defecto}, ya que en el interfaz no existen atributos que no sean constantes. Los métodos por defecto \textbf{pueden ser sobrescritos} en las clases que implementan el interfaz o en las clases derivadas de ellas. En la sobreescritura se puede hacer uso de super (nombre$\_$interfaz.super.método) \\
+
+Se debe de valorar la \textbf{conveniencia} de definir métodos por defecto, sobre todo si necesitan \textbf{argumentos asociados a atributos} de las clases que implementan los interfaces que contienen dichos métodos.
+
+\section{Métodos estáticos}
+Métodos que para \textbf{invocarlos no hace falta} crear ningún objeto de la clase en la que se han definido. Se \textbf{cargan automáticamente} en memoria al iniciar el programa. \\
+
+En un método estático \textbf{únicamente se pueden invocar métodos} de la clase o del interfaz que sean estáticos, puesto que tienen que estar disponibles desde el arranque del programa. (\textbf{No son heredados} por las clases e interfaces derivados de ellos)
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Captura_24_11_26_133050.png}
+    \caption{Compración entre métodos estáticos y por defecto}
+\end{figure}
+
+\newpage
+
+\section{Herencia e interfaces}
+Si una \textbf{clase abstracta cumple las mismas condiciones} que una interfaz “clásica”, es decir, solamente tiene métodos abstractos y no tiene ningún atributo que no sea constante, entonces se podría pensar que una clase derivada tiene varias clase base, o lo que es lo mismo, que \textbf{existe herencia múltiple}.
+
+Una clase debe de \textbf{implementar todos los métodos abstractos} de todas las interfaces que implementa y \textbf{hereda todos los métodos por defecto} de todos esas interfaces.
+\begin{itemize}
+    \item Si varias interfaces tienen en \textbf{común algún método abstracto}, la implementación de ese método en la clase será válida para todos los interfaces.
+    \item Si varias interfaces tienen en \textbf{común algún método estático}, \textbf{no existirá ningún conflicto} en la clase, ya que \textbf{ese tipo de métodos no serán heredan}.
+    \item Si varias interfaces tienen en \textbf{común algún método por defecto}, existirá una \textbf{colisión entre dichos métodos} en relación a cuál de ellos será el que heredará la clase.
+\end{itemize}
+
+Para resolver el conflicto de los métodos por defecto, la clase que implementa las interfaces \textbf{deberá sobrescribir los métodos por defecto} que son comunes a dichas interfaces. \\  
+
+Se pueden crear \textbf{jerarquías de interfaces} siguiendo las mismas reglas de herencia que en el caso de las jerarquías de clases. (\textbf{Existe herencia múltiple entre interfaces}).
+Puesto que en una interfaz tiene todos sus métodos implícitamente públicos, las interfaces derivadas \textbf{heredarán todos los métodos} de las interfaces base, \textbf{excepto los métodos estáticos}.
+Existe \textbf{sobreescritura de los métodos por defecto}, de manera que las interfaces derivadas pueden usar super para invocar la ejecución de los métodos por defecto de las interfaces base. (\textbf{Una clase no puede extender un interfaz ni viceversa})
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Captura_24_11_27_142327.png}
+    \caption{Herencia de interfaces}
+\end{figure}
+
+Buenas prácticas: 
+
+Se deben definir \textbf{interfaces} cuando se quieren \textbf{establecer de forma clara e inequívoca} los métodos de que se van a usar en las restantes clases del programa. \\
+
+Se deben usar \textbf{clases abstractas} cuando se quiere hacer \textbf{énfasis en la reutilización de código}, incluyendo constructores que se invocan desde las clases base.
+
+
+
+\begin{comment}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.65\textwidth]{1.png}
+    \caption{}
+\end{figure}
+\end{comment}
+
+\begin{comment}
+\begin{wrapfigure}[]{r}{0.45\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{8.png}
+    \caption{}
+\end{wrapfigure}
+\end{comment}
+
+\end{document}
